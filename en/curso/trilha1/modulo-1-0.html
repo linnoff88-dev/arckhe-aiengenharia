@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Module 1.0 — Zero Foundation | AI Pyramid</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+
+    /* Light mode overrides - OBRIGATORIO */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Light mode - cores de acento (trilha emerald) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.06); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha1/modulo-1-0.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha1/modulo-1-0.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha1/modulo-1-0.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha1/modulo-1-0.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-1-0.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha1/modulo-1-0.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">AI Pyramid</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intent</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Context</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Effective use</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Architecture</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolution</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-emerald-400" href="../../index.html">Start</a>
+<span>/</span>
+<a class="hover:text-emerald-400" href="index.html">Track 1</a>
+<span>/</span>
+<span class="text-emerald-400">Module 1.0</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">
+        MODULE 1.0
+      </span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🌱 Zero Basics — for those just starting out</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        Never used AI, or tried it once and gave up? This module is for you. No jargon, no rush, no embarrassment: in 40 minutes, you’ll understand what the tool is, bust the 3 myths holding you back, and have your first useful conversation—knowing how to verify what you get.
+      </p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">7</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">40</div>
+<div class="text-xs text-neutral-400">Minutes</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">Basic</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">Practice</div>
+<div class="text-xs text-neutral-400">Type</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- TOPICO 1 -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🤖 What generative AI is — in one honest sentence</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Let’s get started without hype or fearmongering. <strong class="text-emerald-400">Generative AI is a program that has learned patterns from billions of texts and uses those patterns to generate new responses to your request.</strong> That’s it. It’s not a conscious robot, it doesn’t read your mind, and it doesn’t “know” things the way you do—it predicts, with extreme sophistication, what text makes sense to come next.
+      </p>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center">
+<span class="mr-2">🎓</span> The analogy that unlocks everything
+        </h3>
+<p class="text-neutral-300 mb-4">
+          Think of a <strong>a newly hired assistant, exceptionally well-read, who has never worked at YOUR company</strong>. It's read practically everything there is—but it doesn't know your customer, your product, or your tone. If you give it vague instructions, it produces something generic. If you explain things clearly, it surprises you.
+        </p>
+<p class="text-neutral-300">
+          The entire AI Pyramid starts with this observation: <strong class="text-emerald-400">the quality of what comes out depends on the quality of what goes in</strong>. You don't need to understand the math behind it—you need to learn how to give good instructions.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ What AI is NOT</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>A conscious mind that "understands" like a human</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>An infallible oracle — it makes mistakes confidently</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>A substitute for your professional responsibility</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Something only a programmer can use</span></li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ What AI IS</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>An on-demand generator of text, ideas, and structures</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>A powerful accelerator for drafts and first versions</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>A conversation partner that improves with clear instructions</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>A skill you can learn—at any age</span></li>
+</ul>
+</div>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Standards</h4>
+<p class="text-xs text-neutral-400">AI has learned patterns from billions of texts</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Forecast</h4>
+<p class="text-xs text-neutral-400">It generates the most likely text, not the "truth"</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Input → Output</h4>
+<p class="text-xs text-neutral-400">Good request, good response. Vague request, vague response</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Skill</h4>
+<p class="text-xs text-neutral-400">Using it well is a learnable skill—that’s what this course teaches</p>
+</div>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🔤 Essential vocabulary — the 4 words you need</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        You don’t need to memorize 50 technical terms. You need <strong class="text-emerald-400">four</strong>. With them, you can read any tutorial, watch any video, and understand any conversation about AI without feeling left out.
+      </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-2">🧠 Model</h4>
+<p class="text-sm text-neutral-300">The trained “brain”: GPT, Claude, Gemini. Each model has a different personality and strengths—but they all follow the same rules for making a good request.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-2">✍️ Prompt</h4>
+<p class="text-sm text-neutral-300">Your request—the message you send. It’s the most important word in this course: the entire first layer of the pyramid is about writing better prompts.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-2">💬 Response</h4>
+<p class="text-sm text-neutral-300">What the model returns. It isn’t a final verdict: it’s a draft you can refine by asking for adjustments—the conversation continues.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-2">🪟 Context window</h4>
+<p class="text-sm text-neutral-300">The "memory" of the current conversation: everything said so far. When the conversation gets too long, the beginning starts to be forgotten. New conversation = memory wiped.</p>
+</div>
+</div>
+<div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="The context window is a box containing the instructions, conversation history, and your current request—everything the model can see when generating its response" class="w-full h-auto" role="img" viewbox="0 0 1000 280">
+<defs>
+<lineargradient id="m10-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#34d399"></stop><stop offset="1" stop-color="#10b981"></stop>
+</lineargradient>
+<filter height="180%" id="m10-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m10-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#10b981" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="m10-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#34d399"></path></marker>
+</defs>
+<rect fill="url(#m10-grid)" height="280" width="1000" x="0" y="0"></rect>
+<g filter="url(#m10-glow)"><rect fill="#0e2018" height="200" rx="16" stroke="url(#m10-grad)" stroke-width="2.5" width="540" x="60" y="40"></rect></g>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="17" font-weight="600" text-anchor="middle" x="330" y="74">Context window</text>
+<text fill="#a7e8cd" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="330" y="94">everything the model can see right now</text>
+<g font-family="Inter,sans-serif" font-size="13" font-weight="600">
+<rect fill="#0e1b26" height="92" rx="10" stroke="#38bdf8" stroke-width="2" width="146" x="92" y="116"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="165" y="158">Instructions</text>
+<text fill="#9ad6ff" font-size="11" font-weight="400" text-anchor="middle" x="165" y="178">who the AI should be</text>
+<rect fill="#0e1b26" height="92" rx="10" stroke="#38bdf8" stroke-width="2" width="146" x="256" y="116"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="329" y="158">History</text>
+<text fill="#9ad6ff" font-size="11" font-weight="400" text-anchor="middle" x="329" y="178">the conversation so far</text>
+<rect fill="#0e1b26" height="92" rx="10" stroke="#38bdf8" stroke-width="2" width="146" x="420" y="116"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="493" y="158">Your request</text>
+<text fill="#9ad6ff" font-size="11" font-weight="400" text-anchor="middle" x="493" y="178">the current prompt</text>
+</g>
+<path d="M600,140 L760,140" fill="none" marker-end="url(#m10-ah)" opacity="0.65" stroke="#34d399" stroke-width="2"></path>
+<rect fill="#0e2018" height="72" rx="14" stroke="#34d399" stroke-width="2" width="190" x="760" y="104"></rect>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="855" y="134">Response</text>
+<text fill="#a7e8cd" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="855" y="156">generated from what’s in the window</text>
+</svg>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> Practical Tip
+        </h3>
+<p class="text-neutral-300">When AI “forgets” something you said at the beginning of a long conversation, don’t argue with it— <strong>recall in 1 sentence</strong> ("remember: the audience is a beginner and the tone is informal"). You’ve just put the information back into the context window. This simple action solves 90% of the "amnesia."</p>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">🖱️ How to open and chat — the step-by-step instructions</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The biggest barrier for latecomers isn’t intellectual—it’s practical. <strong class="text-emerald-400">"Where do I click?"</strong> Here’s how to get started with the 3 most-used tools. They all have a free version that’s enough for this entire course.
+      </p>
+<div class="space-y-6 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="text-emerald-400 font-bold">1</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Choose ONE tool (not all three)</h4>
+<p class="text-sm text-neutral-400 mb-3">chatgpt.com · claude.ai · gemini.google.com</p>
+<p class="text-neutral-300 text-sm">Any of them will do. The difference between them is smaller than the difference between a good request and a bad one. Overthinking the choice is procrastination—pick the first one that opens.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="text-emerald-400 font-bold">2</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Create a free account and find the text field</h4>
+<p class="text-sm text-neutral-400 mb-3">Email or Google account · 2 minutes</p>
+<p class="text-neutral-300 text-sm">When you enter, you’ll see a text field at the bottom of the screen — just like WhatsApp. That’s where everything happens. Type, press Enter, and the answer appears above.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="text-emerald-400 font-bold">3</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Continue the conversation — don't start over</h4>
+<p class="text-sm text-neutral-400 mb-3">The habit that separates beginners from fluent users</p>
+<p class="text-neutral-300 text-sm">Did the response come back incomplete? <strong>Reply in the same conversation</strong>: "now make it shorter," "give 3 more examples," "explain item 2." Each conversation is a continuous thread — use that to your advantage.</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> Practical Tip
+        </h3>
+<p class="text-neutral-300">Create <strong>one conversation per topic</strong>, like folders: one for task X, another for project Y. Mixing everything into a single conversation confuses the context window — and you can’t find anything afterward.</p>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">🧱 The 3 myths of the latecomer</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Before any technique, we need to knock down the 3 phrases that keep millions of people stuck. If one of them is in your head, this is the most important topic in the module.
+      </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ The myth</h4>
+<ul class="space-y-4 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>"It's already too late."</strong> Everyone already knows this; I'm behind.</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>"It’s a programmer thing."</strong> Without knowing code, I can’t get far.</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>"AI is going to replace me."</strong> Learning is just putting off the inevitable.</span></li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ The reality</h4>
+<ul class="space-y-4 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Most people use AI <strong>poorly</strong> — collects prompts without a method. Those who build the foundation pull ahead in months.</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>The tools speak <strong>Portuguese</strong>. The key skill is making clear requests—a communicator's skill, not a programmer's.</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>The people who get replaced are those who ignore the tool. <strong>Those who master it become more valuable</strong> — in any profession.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center">
+<span class="mr-2">🔺</span> The pyramid's thesis
+        </h3>
+<p class="text-neutral-300">
+<strong>Those who enter at the top see complexity. Those who start with the basics understand how things evolve.</strong> Those who joined “early” and jumped straight into agents and automations stumble over concepts that seem abstract—because they haven’t experienced the fundamentals. By starting with the basics, you build understanding in the natural order. Your “delay” is your structural advantage.
+        </p>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Emotional barrier</h4>
+<p class="text-xs text-neutral-400">Fear holds you back more than the technical side</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Portuguese, not code</h4>
+<p class="text-xs text-neutral-400">Clarity in your request is the #1 skill</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Foundation &gt; speed</h4>
+<p class="text-xs text-neutral-400">A solid foundation beats a collection of tricks</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Value, not threat</h4>
+<p class="text-xs text-neutral-400">Mastering the tool makes you more valuable</p>
+</div>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">💬 First guided conversation — copy, paste, watch it happen</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Enough theory. Open the tool you chose in topic 3 and <strong class="text-emerald-400">copy the 3 messages below, one at a time</strong>, in the same conversation. In practice, you’ll see what a request, a refinement, and a formatting request are.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<p class="text-xs text-neutral-500 mb-2 font-semibold">MESSAGE 1 — the request (replace what’s in brackets)</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 mb-4">
+Help me organize [ONE OF YOUR TASKS, e.g., Thursday’s team meeting]. List the steps in order, from most to least important.
+        </div>
+<p class="text-xs text-neutral-500 mb-2 font-semibold">MESSAGE 2 — the refinement (send after the response)</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 mb-4">
+Good. Now make it shorter: just the 5 essential steps, each in a sentence of no more than 10 words.
+        </div>
+<p class="text-xs text-neutral-500 mb-2 font-semibold">MESSAGE 3 — the format (send last)</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300">
+Perfect. Turn this into a table with 3 columns: Step, Owner, and Suggested deadline.
+        </div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center">
+<span class="mr-2">🔍</span> What you just learned (without realizing it)
+        </h3>
+<ul class="space-y-2 text-neutral-300">
+<li><strong>Message 1:</strong> a request with a clear task + format (“list in order”) already beats 80% of average requests.</li>
+<li><strong>Message 2:</strong> the conversation continues — refining is faster than starting over.</li>
+<li><strong>Message 3:</strong> the AI reformats its own work on command. A ready-made table = no rework for you.</li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">⚡</span> Slow User Shortcut
+        </h3>
+<p class="text-neutral-300">No time for the whole module today? <strong>Do only this topic.</strong> 10 minutes, 3 messages, one of your real tasks solved. That first win changes your relationship with the tool — the rest of the module can wait until tomorrow.</p>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">🛡️ Verification: use it without damaging your reputation</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        This is the topic that protects your reputation. AI has a known and inevitable flaw: <strong class="text-emerald-400">sometimes it makes up facts — with total confidence and fluency</strong>. This is called <strong>hallucination</strong>. It may cite a law that doesn't exist, a study no one conducted, or a statistic that seems perfect. And it does so in the same confident tone as its correct answers.
+      </p>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center">
+<span class="mr-2">⚠️</span> Attention: the mistake doesn’t announce that it’s a mistake
+        </h3>
+<p class="text-neutral-300">A hallucinated answer doesn’t come with a warning label. It’s well-written, convincing, and wrong. That’s why the rule is simple and non-negotiable: <strong>what goes out into the world with YOUR name on it goes through the 3 checks first.</strong> You are always responsible for the result—the AI is a tool, not a guarantor.</p>
+</div>
+<div class="space-y-6 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="text-emerald-400 font-bold">1</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">SOURCE check—"where did this come from?"</h4>
+<p class="text-neutral-300 text-sm">Names, numbers, laws, quotes, and statistics: verify them with a quick search before using them. If the AI cited a study, find the study. 30 seconds of searching can save you weeks of embarrassment.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="text-emerald-400 font-bold">2</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">DATE check—"is this still true?"</h4>
+<p class="text-neutral-300 text-sm">The model learned from texts up to a certain date (the “knowledge cutoff”). Prices, recent laws, tool versions, and news may be outdated. By default, be skeptical about topics that change quickly.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="text-emerald-400 font-bold">3</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">COMMON SENSE check—"does this make sense in MY case?"</h4>
+<p class="text-neutral-300 text-sm">You know your client, your field, your reality—AI doesn’t. If the answer contradicts your experience, trust your experience. Use AI to expand your judgment, never to replace it.</p>
+</div>
+</div>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<p class="text-xs text-neutral-500 mb-2 font-semibold">EXERCISE — deliberately hunt for a hallucination (5 min)</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 mb-3">
+Give me 5 specific facts, with numbers and dates, about [A SUBJECT YOU KNOW WELL — your city, profession, or hobby].
+        </div>
+<p class="text-neutral-300 text-sm">Now check each fact against what you know. Did you find anything inaccurate or made up? <strong class="text-emerald-400">Great — you’ve just inoculated your confidence.</strong> You’ll never accept an AI response again without the reflex to verify it.</p>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Hallucination</h4>
+<p class="text-xs text-neutral-400">Made-up fact delivered with confidence</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">3 checks</h4>
+<p class="text-xs text-neutral-400">Source? Date? Does it make sense?</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Knowledge cutoff</h4>
+<p class="text-xs text-neutral-400">The model stands still; the world doesn’t</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Responsibility</h4>
+<p class="text-xs text-neutral-400">What you create under your name is yours</p>
+</div>
+</div>
+</section>
+<!-- TOPICO 7 -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">7</span>
+<h2 class="text-2xl font-bold">🚧 What AI does NOT do well — a map of its limits</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Knowing the limits isn’t pessimism — it’s strategy. <strong class="text-emerald-400">Those who know where the tool stumbles use it only where it shines</strong>, and never embarrasses itself.
+      </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Where it stumbles</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>Very recent facts</strong> — yesterday’s news, prices, and laws</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>Long calculations and numerical precision</strong> — check all important math</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>Information it doesn’t have</strong> — your client, your spreadsheet, your history (once you provide it—that’s layer 3!)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>Final decision with legal/medical/financial responsibility</strong> — it informs; you (or a professional) decide</span></li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Where it shines</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>First draft of any text</strong> — from email to report</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Summarize, explain, and translate</strong> — any subject, any level</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Generate options and ideas</strong> — 10 titles, 5 approaches, 3 structures</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Organize the mess</strong> — turn scattered notes into structure</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> Practical Tip
+        </h3>
+<p class="text-neutral-300">Note one important thing: the limit <strong>"she doesn’t know your world"</strong> there is a solution—and the solution is for you to provide this world. This has a name: <strong>Context Engineering</strong>, layer 3 of the pyramid. The entire pyramid is the organized response to the limits you just mapped.</p>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center">
+<span class="mr-3">🌱</span> Module Summary
+        </h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">Generative AI = language prediction</strong><span class="text-neutral-400"> — a well-read assistant that has never worked at your company; the quality of what comes out depends on what goes in</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">4 words are enough</strong><span class="text-neutral-400"> — model, prompt, response, and context window</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">The 3 myths were debunked</strong><span class="text-neutral-400"> — it’s not too late, it’s not just for programmers, and mastering it makes you more valuable</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">First conversation completed</strong><span class="text-neutral-400"> — request, refinement, and format in a real task of yours</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">The 3 checks became second nature</strong><span class="text-neutral-400"> — source? date? does it make sense? Nothing goes out under your name without passing those checks</span></div>
+</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-6">
+<h3 class="font-semibold text-emerald-400 mb-2">📦 Module deliverable:</h3>
+<p class="text-neutral-300 text-sm">1) A before-and-after screenshot of your first guided conversation (message 1 vs. final table). 2) The result of your hallucination hunt: which fact you checked and what you discovered. Save both — they mark the starting point of your journey.</p>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-emerald-400 mb-2">Next Module:</h3>
+<p class="text-neutral-300">1.1 — Anatomy of a good prompt: the difficult email case in 4 versions</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">
+            ← Back to Track
+          </a>
+<a class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors" href="modulo-1-1.html">
+            Next Module →
+          </a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>AI Knowledge Engineering — Applied Intelligence Pyramid · 2026</p>
+<p class="mt-2">A course <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

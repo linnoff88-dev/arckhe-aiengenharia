@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Módulo 6.2 — Inteligencia operativa acumulada (CAPSTONE) | Ruta 6 | Pirámide de la IA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+
+    /* Light mode overrides */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225, 29, 72, 0.18); }
+    html:not(.dark) .bg-rose-900\/20 { background-color: rgba(225, 29, 72, 0.06); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.06); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha6/modulo-6-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha6/modulo-6-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha6/modulo-6-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha6/modulo-6-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha6/modulo-6-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-6-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">Pirámide de la IA</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intención</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Contexto</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Aprovechamiento</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Arquitectura</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10" href="index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolución</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-rose-400" href="../../index.html">Inicio</a>
+<span>/</span>
+<a class="hover:text-rose-400" href="index.html">Ruta 6</a>
+<span>/</span>
+<span class="text-rose-400">Módulo 6.2</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-10 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center space-x-3 mb-4">
+<span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full">
+          MÓDULO 6.2
+        </span>
+<span class="inline-block px-3 py-1 bg-primary/20 text-primary text-xs font-semibold rounded-full">
+          CAPSTONE
+        </span>
+</div>
+<h1 class="text-2xl sm:text-3xl font-bold mb-3">🏆 Inteligencia operativa acumulada</h1>
+<p class="text-neutral-400 max-w-3xl">Las 6 capas unidas en un sistema operado, no solo usado. Aquí cierras la pirámide, construyes tu pieza de portafolio y aprendes a presentar lo que construiste — al mercado, en LinkedIn, en tu currículum, en una entrevista.</p>
+<div class="grid grid-cols-4 gap-3 mt-6 max-w-xl">
+<div class="bg-dark-800/50 rounded-lg p-2 border border-dark-600 text-center">
+<div class="text-lg font-bold text-rose-400">7</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-2 border border-dark-600 text-center">
+<div class="text-lg font-bold text-rose-400">~50</div>
+<div class="text-xs text-neutral-400">Minutos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-2 border border-dark-600 text-center">
+<div class="text-lg font-bold text-rose-400">Avanzado</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-2 border border-dark-600 text-center">
+<div class="text-lg font-bold text-rose-400">Capstone</div>
+<div class="text-xs text-neutral-400">Tipo</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- TÓPICO 1: As 6 camadas em ação — SVG pirâmide -->
+<section class="mb-12" id="topico-1">
+<div class="flex items-start space-x-4 mb-6">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-lg">1</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold">Juntarlo todo: las 6 capas en acción</h2>
+<p class="text-neutral-400 mt-1">Prompt → Intención → Contexto → Aprovechamiento → Arquitectura → Evolución</p>
+</div>
+</div>
+<!-- SVG pirâmide das 6 camadas -->
+<div class="rounded-xl border border-rose-500/30 bg-dark-900/40 p-3 mb-6 overflow-hidden">
+<svg aria-label="Las 6 capas de la pirámide en secuencia: Prompt, Intención, Contexto, Aprovechamiento, Arquitectura y Evolución — cada capa alimenta la siguiente con flechas rosas y cian que cierran el ciclo" class="w-full h-auto" role="img" viewbox="0 0 1000 220">
+<defs>
+<lineargradient id="m62-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fb7185"></stop><stop offset="1" stop-color="#f43f5e"></stop>
+</lineargradient>
+<filter height="160%" id="m62-glow" width="160%" x="-30%" y="-30%">
+<fegaussianblur result="b" stddeviation="1.5"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="28" id="m62-grid" patternunits="userSpaceOnUse" width="28">
+<circle cx="1.2" cy="1.2" fill="#f43f5e" opacity="0.08" r="1.2"></circle>
+</pattern>
+<marker id="m62-ah" markerheight="7" markerwidth="7" orient="auto" refx="5.5" refy="3.5"><path d="M0,0 L6,3.5 L0,7 L1.8,3.5 Z" fill="#fb7185"></path></marker>
+<marker id="m62-ahc" markerheight="7" markerwidth="7" orient="auto" refx="5.5" refy="3.5"><path d="M0,0 L6,3.5 L0,7 L1.8,3.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m62-grid)" height="220" width="1000" x="0" y="0"></rect>
+<!-- Camadas: 6 nós em sequência -->
+<!-- T1 Emerald -->
+<rect fill="#0e2018" height="56" rx="10" stroke="#34d399" stroke-width="1.8" width="120" x="10" y="82"></rect>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="70" y="107">T1 Prompt</text>
+<text fill="#a7e8cd" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="70" y="124">la pregunta</text>
+<path d="M130,110 L158,110" fill="none" marker-end="url(#m62-ah)" opacity="0.5" stroke="#34d399" stroke-width="1.5"></path>
+<!-- T2 Blue -->
+<rect fill="#0e1626" height="56" rx="10" stroke="#60a5fa" stroke-width="1.8" width="120" x="158" y="82"></rect>
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="218" y="107">T2 Intención</text>
+<text fill="#bfdbfe" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="218" y="124">el destino</text>
+<path d="M278,110 L306,110" fill="none" marker-end="url(#m62-ah)" opacity="0.5" stroke="#60a5fa" stroke-width="1.5"></path>
+<!-- T3 Purple -->
+<rect fill="#1a0e2a" height="56" rx="10" stroke="#c084fc" stroke-width="1.8" width="120" x="306" y="82"></rect>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="366" y="107">T3 Contexto</text>
+<text fill="#e9d5ff" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="366" y="124">el terreno</text>
+<path d="M426,110 L454,110" fill="none" marker-end="url(#m62-ah)" opacity="0.5" stroke="#c084fc" stroke-width="1.5"></path>
+<!-- T4 Amber -->
+<rect fill="#1a1006" height="56" rx="10" stroke="#fbbf24" stroke-width="1.8" width="130" x="454" y="82"></rect>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="519" y="107">T4 Aprovech.</text>
+<text fill="#fef3c7" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="519" y="124">el método</text>
+<path d="M584,110 L612,110" fill="none" marker-end="url(#m62-ah)" opacity="0.5" stroke="#fbbf24" stroke-width="1.5"></path>
+<!-- T5 Teal -->
+<rect fill="#061a18" height="56" rx="10" stroke="#2dd4bf" stroke-width="1.8" width="130" x="612" y="82"></rect>
+<text fill="#2dd4bf" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="677" y="107">T5 Arquitect.</text>
+<text fill="#99f6e4" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="677" y="124">la escala</text>
+<path d="M742,110 L770,110" fill="none" marker-end="url(#m62-ah)" opacity="0.5" stroke="#2dd4bf" stroke-width="1.5"></path>
+<!-- T6 Rose — GLOW -->
+<g filter="url(#m62-glow)"><rect fill="#2a0f16" height="72" rx="12" stroke="url(#m62-grad)" stroke-width="2.5" width="140" x="770" y="74"></rect></g>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="13" font-weight="700" text-anchor="middle" x="840" y="104">T6 Evolución</text>
+<text fill="#fecdd3" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="840" y="122">el ciclo se cierra</text>
+<text fill="#fecdd3" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="840" y="136">sistema vivo</text>
+<!-- Seta ciano de volta — loop -->
+<path d="M840,146 C840,190 70,190 70,138" fill="none" marker-end="url(#m62-ahc)" opacity="0.7" stroke="#38bdf8" stroke-dasharray="5,4" stroke-width="1.8"></path>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" opacity="0.85" text-anchor="middle" x="455" y="210">ciclo de mejora continua — cada vuelta empieza más fuerte</text>
+</svg>
+</div>
+<div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+<h3 class="font-semibold text-rose-400 mb-3">🔗 Cómo cada capa alimenta a la siguiente</h3>
+<div class="space-y-2 text-sm">
+<p class="text-neutral-300"><span class="text-emerald-400 font-semibold">Prompt (T1):</span> sin una solicitud estructurada, ni la mejor intención se traduce en un resultado.</p>
+<p class="text-neutral-300"><span class="text-blue-400 font-semibold">Intención (T2):</span> sin claridad sobre el destino, escribes prompts precisos para el lugar equivocado.</p>
+<p class="text-neutral-300"><span class="text-purple-400 font-semibold">Contexto (T3):</span> sin el contexto completo, hasta la intención correcta produce una respuesta genérica.</p>
+<p class="text-neutral-300"><span class="text-amber-400 font-semibold">Aprovechamiento (T4):</span> sin método, el buen resultado queda atrapado en una conversación y no se convierte en un activo.</p>
+<p class="text-neutral-300"><span class="text-teal-400 font-semibold">Arquitectura (T5):</span> sin estructura, el método no escala más allá de ti.</p>
+<p class="text-neutral-300"><span class="text-rose-400 font-semibold">Evolución (T6):</span> sin el ciclo de mejora, el sistema crece y se detiene. Con él, cada ciclo comienza más fuerte que el anterior.</p>
+</div>
+</div>
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5">
+<h4 class="font-semibold text-primary mb-2">💡 Conceptos clave</h4>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">6 capas</span><p class="text-neutral-400 text-xs mt-1">interdependientes</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Sistema</span><p class="text-neutral-400 text-xs mt-1">≠ colección de herramientas</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Pirámide</span><p class="text-neutral-400 text-xs mt-1">la base sostiene la parte superior</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Loop</span><p class="text-neutral-400 text-xs mt-1">cada vuelta más fuerte</p></div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 2: Ritmo de revisão — timeline -->
+<section class="mb-12" id="topico-2">
+<div class="flex items-start space-x-4 mb-6">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-lg">2</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold">Ritmo de revisión sin burocracia</h2>
+<p class="text-neutral-400 mt-1">Rituales ligeros que se mantienen — no metodologías pesadas que abandonamos.</p>
+</div>
+</div>
+<!-- Timeline -->
+<div class="space-y-5 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-sm">D</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Revisión diaria (2 min)</h4>
+<p class="text-sm text-neutral-400">Al final de cualquier tarea en la que hayas usado IA: «¿fue mejor o peor de lo esperado?». Si fue peor, anota el motivo. Si fue mucho mejor, anota la variable diferente. Nada más.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-sm">S</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Revisión semanal (10 min)</h4>
+<p class="text-sm text-neutral-400">¿Qué funcionó esta semana? ¿Qué repetirías? ¿Qué ajustarías? ¿Hay algún artefacto que convenga actualizar según lo que pasó? Si es así, actualízalo ahora.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-sm">M</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Revisión mensual (30 min)</h4>
+<p class="text-sm text-neutral-400">Auditoría completa: verificar los indicadores de evolución, versionar los artefactos que acumularon cambios, revisar el mapa del sistema, comprobar si las métricas van en la dirección correcta.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-sm">T</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Revisión trimestral (1-2h)</h4>
+<p class="text-sm text-neutral-400">El momento de mirar el sistema en su conjunto: ¿algún artefacto llegó al final de su vida útil y hay que reescribirlo? ¿Alguna capa está poco desarrollada? Es hora de planificar el siguiente nivel.</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5">
+<h4 class="font-semibold text-primary mb-2">💡 Conceptos clave</h4>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Ritmo ligero</span><p class="text-neutral-400 text-xs mt-1">D/S/M/T</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Baja fricción</span><p class="text-neutral-400 text-xs mt-1">mínimo que funciona</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Hábito</span><p class="text-neutral-400 text-xs mt-1">sostenible durante años</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">30 min/mes</span><p class="text-neutral-400 text-xs mt-1">costo real del sistema</p></div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 3: Métricas -->
+<section class="mb-12" id="topico-3">
+<div class="flex items-start space-x-4 mb-6">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-lg">3</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold">Métricas que importan para TU objetivo</h2>
+<p class="text-neutral-400 mt-1">No existe una métrica universal. Definir las tuyas es parte del sistema.</p>
+</div>
+</div>
+<!-- Box "Na sua profissão" — 5 perfis -->
+<div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+<h3 class="font-semibold text-rose-400 mb-4">👥 En tu profesión — 5 perfiles, 5 métricas</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="bg-dark-800/60 rounded-lg p-4 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">🧑‍💼 Gerente</h4>
+<p class="text-sm text-neutral-400">Tiempo de reunión → decisión documentada. Meta: ≥80% de los briefings aprobados sin revisión.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-4 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">🎨 Creador / Autónomo</h4>
+<p class="text-sm text-neutral-400">CTR / interacción por formato. Meta: 1 nuevo aprendizaje de formato por semana.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-4 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">💻 Desarrollador / Técnico</h4>
+<p class="text-sm text-neutral-400">Tiempo por tarea recurrente. Meta: que el tiempo promedio disminuya ≥10% cada trimestre.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-4 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">📚 Educador / Consultor</h4>
+<p class="text-sm text-neutral-400">NPS del material entregado. Meta: ≥1 artefacto nuevo en el portafolio por mes.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-4 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">🔬 Investigador / Analista</h4>
+<p class="text-sm text-neutral-400">Tiempo de síntesis por informe. Meta: que los prompts de síntesis lleguen a v3.0+.</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5">
+<h4 class="font-semibold text-primary mb-2">💡 Conceptos clave</h4>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Métrica personal</span><p class="text-neutral-400 text-xs mt-1">específica para el objetivo</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">2–3 KPI</span><p class="text-neutral-400 text-xs mt-1">enfoque, no hoja de cálculo</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Tendencia</span><p class="text-neutral-400 text-xs mt-1">la dirección importa más</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Repaso 6m</span><p class="text-neutral-400 text-xs mt-1">la métrica también evoluciona</p></div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 4: Quando reescrever vs. ajustar -->
+<section class="mb-12" id="topico-4">
+<div class="flex items-start space-x-4 mb-6">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-lg">4</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold">Cuándo reescribir y cuándo ajustar</h2>
+<p class="text-neutral-400 mt-1">El diagnóstico del fin de vida de un artefacto.</p>
+</div>
+</div>
+<!-- Grid decisão -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-5">
+<h4 class="font-semibold text-emerald-400 mb-3">✓ Ajustar (patch)</h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li>• El núcleo del artefacto sigue siendo válido</li>
+<li>• El cambio necesario es específico y delimitado</li>
+<li>• Menos de 3 parches aplicados</li>
+<li>• El objetivo del artefacto no cambió</li>
+<li>• Resultado: agregar o quitar una instrucción</li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-5">
+<h4 class="font-semibold text-red-400 mb-3">✗ Reescribir (reiniciar)</h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li>• Acumulaste 4+ parches que se contradicen</li>
+<li>• El objetivo cambió (nuevo contexto, nuevo público)</li>
+<li>• El resultado está consistentemente por debajo de lo esperado</li>
+<li>• No puedes explicar la lógica del artefacto actual</li>
+<li>• Resultado: archivo nuevo, v1.0 con lo aprendido</li>
+</ul>
+</div>
+</div>
+<div class="bg-blue-900/20 border border-blue-500/30 rounded-xl p-5 mb-6">
+<h4 class="font-semibold text-blue-400 mb-2">🔍 La señal más clara de que es hora de reescribir</h4>
+<p class="text-neutral-300 text-sm">Si lees el artefacto actual y no puedes explicar por qué está cada instrucción — o, peor aún, si algunas parecen contradecirse — es señal de que el artefacto creció sin planificación y acumuló deuda. Reescribirlo cuesta 2 horas ahora; seguir con un artefacto deficiente cuesta semanas a lo largo del año.</p>
+</div>
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5">
+<h4 class="font-semibold text-primary mb-2">💡 Conceptos clave</h4>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Parche vs. reinicio</span><p class="text-neutral-400 text-xs mt-1">decisión consciente</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Débito</span><p class="text-neutral-400 text-xs mt-1">parches acumulados</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Legibilidad</span><p class="text-neutral-400 text-xs mt-1">¿entiendes el tuyo?</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Reescritura</span><p class="text-neutral-400 text-xs mt-1">v1.0 con lo aprendido</p></div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 5: Vantagem composta -->
+<section class="mb-12" id="topico-5">
+<div class="flex items-start space-x-4 mb-6">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-lg">5</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold">Ventaja compuesta</h2>
+<p class="text-neutral-400 mt-1">Por qué quien llega tarde y opera sistemas supera a quien colecciona prompts.</p>
+</div>
+</div>
+<div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+<h3 class="font-semibold text-rose-400 mb-4">📊 Dos perfiles, 6 meses, resultados divergentes</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div>
+<div class="text-neutral-300 font-semibold mb-2">Perfil A — ingresó 6 meses antes</div>
+<div class="space-y-2 text-sm">
+<div class="flex justify-between border-b border-dark-600 pb-1">
+<span class="text-neutral-400">Mes 1</span><span class="text-neutral-300">prompts nuevos, entusiasmo</span>
+</div>
+<div class="flex justify-between border-b border-dark-600 pb-1">
+<span class="text-neutral-400">Mes 3</span><span class="text-neutral-300">colección de 200 prompts sueltos</span>
+</div>
+<div class="flex justify-between border-b border-dark-600 pb-1">
+<span class="text-neutral-400">Mes 6</span><span class="text-neutral-300">todavía busca «el prompt correcto»</span>
+</div>
+<div class="flex justify-between">
+<span class="text-neutral-400">Resultado</span><span class="text-red-400 font-semibold">plateau</span>
+</div>
+</div>
+</div>
+<div>
+<div class="text-neutral-300 font-semibold mb-2">Perfil B — ingresó 6 meses después</div>
+<div class="space-y-2 text-sm">
+<div class="flex justify-between border-b border-dark-600 pb-1">
+<span class="text-neutral-400">Mes 1</span><span class="text-neutral-300">aprende las 6 capas</span>
+</div>
+<div class="flex justify-between border-b border-dark-600 pb-1">
+<span class="text-neutral-400">Mes 3</span><span class="text-neutral-300">prompts v2.0, primer playbook</span>
+</div>
+<div class="flex justify-between border-b border-dark-600 pb-1">
+<span class="text-neutral-400">Mes 6</span><span class="text-neutral-300">sistema con ciclos cerrados</span>
+</div>
+<div class="flex justify-between">
+<span class="text-neutral-400">Resultado</span><span class="text-emerald-400 font-semibold">supera el Perfil A</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5">
+<h4 class="font-semibold text-primary mb-2">💡 Conceptos clave</h4>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Interés compuesto</span><p class="text-neutral-400 text-xs mt-1">ciclo × ciclo</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Sistema &gt; colección</span><p class="text-neutral-400 text-xs mt-1">lo conectado supera a lo disperso</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Rezago</span><p class="text-neutral-400 text-xs mt-1">ventaja de empezar bien</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">6 meses</span><p class="text-neutral-400 text-xs mt-1">horizonte de inversión</p></div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 6: CAPSTONE — Portfólio -->
+<section class="mb-12" id="topico-6">
+<div class="flex items-start space-x-4 mb-6">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-lg">6</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold">📦 Capstone como portafolio</h2>
+<p class="text-neutral-400 mt-1">Mapa del Sistema + LinkedIn + currículum + entrevista — todo en una sola pieza.</p>
+</div>
+</div>
+<!-- Box entregável -->
+<div class="bg-gradient-to-br from-rose-900/40 to-dark-800 rounded-xl border border-rose-500/30 p-6 mb-6">
+<div class="flex items-center space-x-2 mb-4">
+<span class="text-2xl">📦</span>
+<h3 class="font-bold text-xl text-white">Entregable: Mapa del Sistema de Conocimiento de IA</h3>
+</div>
+<p class="text-neutral-300 mb-4">Una página que responde: ¿cuáles son tus artefactos principales en cada capa? ¿Cómo se conectan? ¿Cuál es el ciclo de evolución que aplicas?</p>
+<div class="grid grid-cols-3 gap-3 mb-4 text-sm">
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600">
+<div class="text-rose-400 font-bold mb-1">Sección 1</div>
+<p class="text-neutral-400">Mis artefactos por capa (6 celdas, 1 por ruta)</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600">
+<div class="text-rose-400 font-bold mb-1">Sección 2</div>
+<p class="text-neutral-400">Mi ciclo de evolución (frecuencia + indicadores)</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600">
+<div class="text-rose-400 font-bold mb-1">Sección 3</div>
+<p class="text-neutral-400">Qué construí + qué funciona hoy</p>
+</div>
+</div>
+<p class="text-sm text-neutral-500">Formato: Notion, Google Docs, PDF de 1 página — lo que ya usas. Lo importante es que exista, no dónde está.</p>
+</div>
+<!-- Como apresentar: 3 contextos -->
+<h3 class="text-xl font-bold mb-4 text-white">Cómo presentar el sistema: 3 contextos</h3>
+<!-- Post LinkedIn — box mono -->
+<div class="bg-dark-800 border border-rose-500/30 rounded-xl p-6 mb-4">
+<div class="text-rose-400 font-bold mb-3">🔗 Publicación de LinkedIn — plantilla adaptable</div>
+<div class="font-mono text-sm text-neutral-300 space-y-2 bg-dark-900/60 rounded-lg p-4">
+<p>No uso IA.</p>
+<p>Opero un sistema de IA.</p>
+<p class="text-neutral-500">—</p>
+<p>La diferencia parece semántica. No lo es.</p>
+<p class="text-neutral-500">[describe 1 ejemplo concreto de tu sistema en acción]</p>
+<p class="text-neutral-500">Ej.: "Cada entrega que hago comienza con un briefing base v3.0 que construí a lo largo de 6 meses. No es un prompt: es un artefacto vivo que evoluciona con cada proyecto."</p>
+<p class="text-neutral-500">—</p>
+<p>Resultado: [métrica concreta o calidad de entrega]</p>
+<p class="text-neutral-500">—</p>
+<p>El sistema tiene 6 capas. Aprendí cada una de ellas.</p>
+<p>Si quieres ver el mapa → [enlace o "mándame un mensaje"]</p>
+<p class="text-neutral-500">—</p>
+<p>#IA #productividad #[tu área]</p>
+</div>
+</div>
+<!-- Currículo -->
+<div class="bg-dark-800 border border-dark-600 rounded-xl p-5 mb-4">
+<div class="font-semibold text-white mb-2">📄 Cómo describirlo en el currículum</div>
+<div class="bg-dark-900/60 rounded-lg p-4 font-mono text-sm text-neutral-300">
+<p><span class="text-rose-400">Competencia:</span> Ingeniería del conocimiento con IA</p>
+<p><span class="text-neutral-500">Descripción:</span> Opero un sistema estructurado de 6 capas (prompt → evolución) con artefactos documentados y versionados. Reducción promedio del [X]% en el tiempo de tareas recurrentes en [área].</p>
+</div>
+</div>
+<!-- Entrevista -->
+<div class="bg-emerald-900/20 border border-emerald-500/30 rounded-xl p-5 mb-6">
+<div class="font-semibold text-emerald-400 mb-2">💬 Frase para una entrevista</div>
+<blockquote class="text-neutral-300 italic text-base border-l-4 border-rose-500/50 pl-4">
+          "No uso la IA como una herramienta que abro cuando la necesito. Opero un sistema de IA: tengo artefactos documentados para cada tipo de tarea, un ciclo de evolución que actualiza esos artefactos con lo aprendido en cada proyecto y métricas que muestran la evolución a lo largo del tiempo. Es la diferencia entre usar una calculadora y tener un proceso financiero."
+        </blockquote>
+</div>
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5">
+<h4 class="font-semibold text-primary mb-2">💡 Conceptos clave</h4>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Mapa de 1 página</span><p class="text-neutral-400 text-xs mt-1">pieza de portafolio</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Publicación de LinkedIn</span><p class="text-neutral-400 text-xs mt-1">template adaptable</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Plan de estudios</span><p class="text-neutral-400 text-xs mt-1">competencia con métrica</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">"Yo opero"</span><p class="text-neutral-400 text-xs mt-1">vs. «yo lo uso»</p></div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 7: Atalho do retardatário -->
+<section class="mb-12" id="topico-7">
+<div class="flex items-start space-x-4 mb-6">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center">
+<span class="text-rose-400 font-bold text-lg">7</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold">Atajo para rezagados</h2>
+<p class="text-neutral-400 mt-1">La única pregunta que activa el ciclo de evolución en cualquier punto.</p>
+</div>
+</div>
+<div class="bg-gradient-to-br from-rose-900/30 to-dark-800 rounded-xl border border-rose-500/30 p-8 mb-6 text-center">
+<p class="text-neutral-400 text-sm mb-3">La pregunta que inicia todo</p>
+<p class="text-3xl font-bold text-white mb-3">"¿Qué repito que podría mejorar?"</p>
+<p class="text-neutral-400 max-w-2xl mx-auto">Aplícalo a cualquier tarea recurrente. La respuesta señala el siguiente punto de mejora más valioso del sistema — sin reunión, sin metodología, sin ceremonias.</p>
+</div>
+<!-- Grid fazer/não fazer -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-5">
+<h4 class="font-semibold text-red-400 mb-3">✗ Sin la pregunta</h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li>• Repites las mismas tareas con el mismo esfuerzo</li>
+<li>• Te das cuenta de que «tardó mucho», pero no sabes por qué</li>
+<li>• Esperas un «buen momento» para mejorar el sistema</li>
+<li>• 1 año después: misma velocidad, mismo esfuerzo</li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-5">
+<h4 class="font-semibold text-emerald-400 mb-3">✓ Con la pregunta</h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li>• Identifica la tarea recurrente que más tiempo consume</li>
+<li>• Crea o actualiza el artefacto para esa tarea</li>
+<li>• La próxima ejecución ya es mejor</li>
+<li>• 1 año después: la tarea lleva la mitad del tiempo original</li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5">
+<h4 class="font-semibold text-primary mb-2">🎯 Ejercicio final</h4>
+<p class="text-neutral-300 text-sm mb-3">Enumera tus 5 tareas más recurrentes que involucran IA. Para cada una: aplica la pregunta. Elige la respuesta que más has evitado mirar. Esa es tu primera mejora del sistema.</p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">1 pregunta</span><p class="text-neutral-400 text-xs mt-1">para iniciar todo</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Recurrencia</span><p class="text-neutral-400 text-xs mt-1">dónde está la ganancia</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Sin ceremonia</span><p class="text-neutral-400 text-xs mt-1">empieza ahora</p></div>
+<div class="bg-dark-800 rounded-lg p-3 text-center"><span class="text-rose-400 font-semibold">Atajo</span><p class="text-neutral-400 text-xs mt-1">el rezagado que opera</p></div>
+</div>
+</div>
+</section>
+<!-- RESUMO CAPSTONE — fechamento do curso -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-rose-900/50 via-dark-800 to-dark-800 rounded-xl border border-rose-500/30 p-8">
+<div class="text-center mb-8">
+<span class="text-4xl">🏆</span>
+<h2 class="text-2xl font-bold mt-3 mb-2">Llegaste a la cima de la pirámide</h2>
+<p class="text-neutral-400 max-w-2xl mx-auto">Quien entra por la cima ve complejidad. Quien empieza desde la base entiende la evolución. Tú hiciste ambas cosas y ahora manejas un sistema.</p>
+</div>
+<!-- As 6 camadas recapituladas -->
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+<div class="bg-emerald-900/20 border border-emerald-500/20 rounded-lg p-3 flex items-center space-x-3">
+<span class="text-emerald-400 font-bold">T1</span>
+<div>
+<div class="text-sm font-semibold text-white">Prompt</div>
+<div class="text-xs text-neutral-400">la pregunta que funciona</div>
+</div>
+</div>
+<div class="bg-blue-900/20 border border-blue-500/20 rounded-lg p-3 flex items-center space-x-3">
+<span class="text-blue-400 font-bold">T2</span>
+<div>
+<div class="text-sm font-semibold text-white">Intención</div>
+<div class="text-xs text-neutral-400">el destino antes de la solicitud</div>
+</div>
+</div>
+<div class="bg-purple-900/20 border border-purple-500/20 rounded-lg p-3 flex items-center space-x-3">
+<span class="text-purple-400 font-bold">T3</span>
+<div>
+<div class="text-sm font-semibold text-white">Contexto</div>
+<div class="text-xs text-neutral-400">el terreno que enriquece</div>
+</div>
+</div>
+<div class="bg-amber-900/20 border border-amber-500/20 rounded-lg p-3 flex items-center space-x-3">
+<span class="text-amber-400 font-bold">T4</span>
+<div>
+<div class="text-sm font-semibold text-white">Aprovechamiento</div>
+<div class="text-xs text-neutral-400">el método que se convierte en un activo</div>
+</div>
+</div>
+<div class="bg-teal-900/20 border border-teal-500/20 rounded-lg p-3 flex items-center space-x-3">
+<span class="text-teal-400 font-bold">T5</span>
+<div>
+<div class="text-sm font-semibold text-white">Arquitectura</div>
+<div class="text-xs text-neutral-400">la escala que no depende</div>
+</div>
+</div>
+<div class="bg-rose-900/20 border border-rose-500/20 rounded-lg p-3 flex items-center space-x-3">
+<span class="text-rose-400 font-bold">T6</span>
+<div>
+<div class="text-sm font-semibold text-white">Evolución</div>
+<div class="text-xs text-neutral-400">el ciclo que lo mejora todo</div>
+</div>
+</div>
+</div>
+<!-- O kit que você leva -->
+<div class="bg-dark-800/60 border border-dark-600 rounded-xl p-6 mb-8">
+<h3 class="font-bold text-rose-400 mb-4">🎒 El kit que construiste</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+<div class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">✓</span><span class="text-neutral-300"><strong>Biblioteca de prompts</strong> con versión y nombre (T1)</span></div>
+<div class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">✓</span><span class="text-neutral-300"><strong>Carta de intención</strong> reutilizable (T2)</span></div>
+<div class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">✓</span><span class="text-neutral-300"><strong>Briefing base</strong> con checklist de privacidad (T3)</span></div>
+<div class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">✓</span><span class="text-neutral-300"><strong>Playbook + índice</strong> de la biblioteca (T4)</span></div>
+<div class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">✓</span><span class="text-neutral-300"><strong>Flujo + minisistema</strong> documentado (T5)</span></div>
+<div class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">✓</span><span class="text-neutral-300"><strong>Mapa del Sistema + publicación de LinkedIn + ritual</strong> (T6)</span></div>
+</div>
+</div>
+<!-- Frase de fechamento + vantagem composta -->
+<div class="bg-rose-900/20 border border-rose-500/30 rounded-xl p-6 mb-6">
+<p class="text-neutral-300 text-base leading-relaxed">
+<strong class="text-rose-400">Quien empezó desde la base entiende la evolución.</strong> Cada capa que aprendiste no fue información acumulada: fue una base que se añadió. Un buen prompt ahora depende de una intención clara, que depende de un contexto rico, que se aprovecha en un método escalable, en una arquitectura que mejora con la evolución. No tienes 6 herramientas. Tienes un sistema.
+          </p>
+<p class="text-neutral-400 text-sm mt-4">
+            Y quien llega tarde y opera el sistema en 6 meses supera a quien empezó antes y se quedó acumulando. La ventaja compuesta no es una metáfora: es el mecanismo.
+          </p>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-6">
+<h3 class="font-semibold text-rose-400 mb-2">🎯 Próximo paso:</h3>
+<p class="text-neutral-300">Completaste las 6 rutas. Ahora es hora de demostrar que llegaste a la cima: la Prueba de la Pirámide evalúa las 6 capas con preguntas basadas en casos del mundo real. El resultado es una insignia que puedes compartir — la prueba concreta de que no usas IA, operas un sistema.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-6-1.html">
+            ← Módulo anterior
+          </a>
+<a class="flex-1 text-center px-6 py-4 bg-rose-600 text-white rounded-lg font-bold hover:bg-rose-500 transition-colors text-lg" href="../prova/index.html">
+            🏆 Hacer la Prueba de la Pirámide →
+          </a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>Ingeniería de Conocimiento de la IA — Pirámide de la Inteligencia Aplicada · 2026</p>
+<p class="mt-2">Un curso <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<script>
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+    function updateIcons() {
+      if (document.documentElement.classList.contains('dark')) {
+        darkIcon.classList.add('hidden'); lightIcon.classList.remove('hidden');
+      } else {
+        lightIcon.classList.add('hidden'); darkIcon.classList.remove('hidden');
+      }
+    }
+    updateIcons();
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      updateIcons();
+    });
+  </script>
+</body>
+</html>

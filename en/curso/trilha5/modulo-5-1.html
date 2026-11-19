@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Module 5.1 — Systems Thinking | AI Pyramid</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+
+    /* Light mode overrides */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Light mode - teal accent */
+    html:not(.dark) .text-teal-400 { color: #0d9488; }
+    html:not(.dark) .bg-teal-500\/20 { background-color: rgba(13, 148, 136, 0.12); }
+    html:not(.dark) .bg-teal-500\/10 { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .border-teal-500\/30 { border-color: rgba(13, 148, 136, 0.25); }
+    html:not(.dark) .hover\:bg-teal-500\/30:hover { background-color: rgba(13, 148, 136, 0.18); }
+    html:not(.dark) .bg-teal-900\/20 { background-color: rgba(13, 148, 136, 0.06); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha5/modulo-5-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha5/modulo-5-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha5/modulo-5-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha5/modulo-5-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-5-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha5/modulo-5-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">AI Pyramid</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intent</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Context</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Effective use</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-teal-400 bg-teal-500/10" href="index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Architecture</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolution</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-teal-400" href="../../index.html">Start</a>
+<span>/</span>
+<a class="hover:text-teal-400" href="index.html">Track 5</a>
+<span>/</span>
+<span class="text-teal-400">Module 5.1</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-teal-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-teal-500/20 text-teal-400 text-xs font-semibold rounded-full mb-4">
+        MODULE 5.1
+      </span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🔄 Think in systems, not commands</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        The invisible bottleneck case: ten excellent prompts, an organized library—and the work still gets stuck because every step depends on you remembering to do it. This module teaches you to see what’s missing: the process that connects the pieces.
+      </p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-teal-400">7</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-teal-400">45</div>
+<div class="text-xs text-neutral-400">Minutes</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-teal-400">Medium</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-teal-400">No-code</div>
+<div class="text-xs text-neutral-400">Type</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- TOPICO 1 -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">➡️ From isolated command to workflow</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        A standalone command asks: "what does the AI do?" A workflow asks: <strong class="text-teal-400">"how do the steps connect to produce a predictable result?"</strong> The difference is that the workflow doesn’t depend on you being in the middle, remembering what comes next.
+      </p>
+<!-- SVG fluxo linear teal com seta de retorno ciano -->
+<div class="rounded-2xl border border-teal-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Content production workflow: Idea comes in, AI interprets and structures it, AI drafts it, Evaluation against criteria — if approved, it goes to Publication; if not, a cyan return arrow goes back to Adjustment and returns to the draft" class="w-full h-auto" role="img" viewbox="0 0 900 200">
+<defs>
+<lineargradient id="m51-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#2dd4bf"></stop><stop offset="1" stop-color="#14b8a6"></stop>
+</lineargradient>
+<filter height="180%" id="m51-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m51-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#14b8a6" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="m51-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#2dd4bf"></path></marker>
+<marker id="m51-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m51-grid)" height="200" width="900" x="0" y="0"></rect>
+<!-- setas principais -->
+<line fill="none" marker-end="url(#m51-ah)" opacity="0.7" stroke="#2dd4bf" stroke-width="2" x1="118" x2="166" y1="95" y2="95"></line>
+<line fill="none" marker-end="url(#m51-ah)" opacity="0.7" stroke="#2dd4bf" stroke-width="2" x1="282" x2="330" y1="95" y2="95"></line>
+<line fill="none" marker-end="url(#m51-ah)" opacity="0.7" stroke="#2dd4bf" stroke-width="2" x1="446" x2="494" y1="95" y2="95"></line>
+<!-- seta ok -->
+<line fill="none" marker-end="url(#m51-ah)" opacity="0.7" stroke="#2dd4bf" stroke-width="2" x1="630" x2="678" y1="95" y2="95"></line>
+<text fill="#2dd4bf" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="654" y="88">OK</text>
+<!-- seta retorno ciano -->
+<path d="M562,131 C562,170 390,170 338,131" fill="none" marker-end="url(#m51-ahc)" opacity="0.85" stroke="#38bdf8" stroke-dasharray="5,3" stroke-width="2"></path>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="450" y="186">not OK → revise</text>
+<!-- caixas -->
+<rect fill="#0c1f1c" height="48" rx="9" stroke="#2dd4bf" stroke-width="2" width="98" x="20" y="71"></rect>
+<text fill="#7edcd2" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="69" y="93">Idea/topic</text>
+<text fill="#5cb8ae" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="69" y="109">input</text>
+<rect fill="#0c1f1c" height="48" rx="9" stroke="#2dd4bf" stroke-width="2" width="116" x="166" y="71"></rect>
+<text fill="#7edcd2" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="224" y="93">AI structures</text>
+<text fill="#5cb8ae" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="224" y="109">post outline</text>
+<rect fill="#0c1f1c" height="48" rx="9" stroke="#2dd4bf" stroke-width="2" width="116" x="330" y="71"></rect>
+<text fill="#7edcd2" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="388" y="93">AI drafts</text>
+<text fill="#5cb8ae" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="388" y="109">complete draft</text>
+<g filter="url(#m51-glow)"><rect fill="#0c2422" height="72" rx="12" stroke="url(#m51-grad)" stroke-width="2.5" width="136" x="494" y="59"></rect></g>
+<text fill="#2dd4bf" font-family="Inter,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="562" y="91">Evaluation</text>
+<text fill="#7edcd2" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="562" y="110">tone + length + CTA</text>
+<rect fill="#0c1f1c" height="48" rx="9" stroke="#2dd4bf" stroke-width="2" width="102" x="678" y="71"></rect>
+<text fill="#7edcd2" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="729" y="93">Publishing</text>
+<text fill="#5cb8ae" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="729" y="109">final result</text>
+<!-- título -->
+<text fill="#2dd4bf" font-family="Inter,sans-serif" font-size="12" font-weight="600" opacity="0.8" text-anchor="middle" x="450" y="28">Content production workflow — 5 boxes + review loop</text>
+</svg>
+</div>
+<div class="bg-teal-900/20 rounded-xl border border-teal-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-teal-400 mb-4 flex items-center">
+<span class="mr-2">🧩</span> The difference that changes everything
+        </h3>
+<p class="text-neutral-300 mb-3">Standalone command: you ask → AI responds → you decide what to do. It’s all in your head, all in the moment.</p>
+<p class="text-neutral-300">Workflow: <strong>the process decides</strong> what comes next. You define the rules once — the system applies them every time.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> Practical Tip
+        </h3>
+<p class="text-neutral-300">To turn a habit into a workflow, ask: <strong>"if I had to teach someone to do this without them asking me anything, what would the steps be?"</strong> The answer to this question is your workflow. Write it down on paper before opening any tool.</p>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🤖 What AI does in a system</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        AI isn’t an oracle that solves everything with one question. In a system, it takes on <strong class="text-teal-400">specific roles at specific stages</strong>. Understanding these roles is what lets you distribute the work intelligently.
+      </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-teal-900/20 rounded-xl border border-teal-500/30 p-6">
+<h4 class="font-bold text-teal-400 mb-4">✓ What AI does well in a system</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-teal-400">✓</span><span><strong>Interprets:</strong> turns raw input into something structured</span></li>
+<li class="flex items-start space-x-2"><span class="text-teal-400">✓</span><span><strong>Generates a proposal:</strong> produces a first draft against the criteria</span></li>
+<li class="flex items-start space-x-2"><span class="text-teal-400">✓</span><span><strong>Measures:</strong> compare the output against an explicit rubric</span></li>
+<li class="flex items-start space-x-2"><span class="text-teal-400">✓</span><span><strong>Compare:</strong> two versions side by side with criteria</span></li>
+<li class="flex items-start space-x-2"><span class="text-teal-400">✓</span><span><strong>Executes parts:</strong> handles one part of the process while another step is done by a person</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ What NOT to delegate to AI in the system</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>Final decision:</strong> publish, send, sign — always with a human</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>Contextual judgment:</strong> "makes sense for client X" requires knowledge she doesn’t have</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>Legal responsibility:</strong> no AI system signs on your behalf</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>Define criteria:</strong> what "good" means is your choice — not the AI's</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<p class="text-xs text-neutral-500 mb-2 font-semibold">AI ROLES BY BOX — EXAMPLE OF AN ANALYSIS SYSTEM</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 leading-relaxed">
+<span class="text-teal-400">Box 1 — Interpretation:</span> <span class="text-neutral-400">"Read this document and extract the 5 main points as bullet points."</span><br/>
+<span class="text-teal-400">Box 2 — Analysis:</span> <span class="text-neutral-400">"Based on the 5 points, identify risks and opportunities."</span><br/>
+<span class="text-teal-400">Box 3 — Proposal:</span> <span class="text-neutral-400">"Suggest 3 priority actions, ranked by impact × effort."</span><br/>
+<span class="text-teal-400">Box 4 — Evaluation:</span> <span class="text-neutral-400">"Does each action meet criteria X, Y, Z? Point out what doesn't."</span><br/>
+<span class="text-neutral-500">↳ human decides: approve, adjust, or discard</span>
+</div>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">✏️ Designing the first workflow</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The most important exercise in the module. Take a process you already do—creating a post, writing a report, creating a lesson—and <strong class="text-teal-400">put it on paper in boxes</strong>. Before using any tool.
+      </p>
+<div class="space-y-6 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center">
+<span class="text-teal-400 font-bold">1</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">List the steps you already take</h4>
+<p class="text-sm text-neutral-400 mb-2">Chosen process: creating a social media post</p>
+<p class="text-neutral-300 text-sm">You already do this mentally: think about the topic, choose the angle, draft, review, adjust the length, publish. Write each step on a sticky note (real or mental).</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center">
+<span class="text-teal-400 font-bold">2</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Mark: human or AI?</h4>
+<p class="text-sm text-neutral-400 mb-2">For each step, decide who executes it</p>
+<p class="text-neutral-300 text-sm">Human: choose the topic, approve the tone, publish. AI: structure the draft, write, review against criteria. Mark them with a different color or symbol on paper.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center">
+<span class="text-teal-400 font-bold">3</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Connect the boxes with arrows</h4>
+<p class="text-sm text-neutral-400 mb-2">The workflow starts to take shape</p>
+<p class="text-neutral-300 text-sm">Where does the AI receive something from a person? Where does it deliver something back? The arrows reveal the handoffs—and also where the process usually gets stuck (steps without an incoming arrow are bottlenecks).</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-teal-500/20 flex items-center justify-center">
+<span class="text-teal-400 font-bold">4</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-teal-400 mb-2">Add the return arrow</h4>
+<p class="text-sm text-neutral-400 mb-2">The loop closes the system</p>
+<p class="text-neutral-300 text-sm">From the Evaluation box, draw an arrow back to the previous box when the result doesn’t pass. This cyan arrow is what turns a linear sequence into a system that improves.</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> Practical Tip
+        </h3>
+<p class="text-neutral-300">Your first workflow doesn’t need to be perfect. <strong>The draft will reveal bottlenecks you didn’t know existed</strong> — steps where the process always depends on you being there. These are the points the architecture will solve.</p>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">🔀 Decision points and branches</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Not every workflow is a straight line. Sometimes the process branches: <strong class="text-teal-400">if A, then it goes in box X; if B, it goes in box Y</strong>. Mapping these forks turns implicit judgment into an explicit rule.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<p class="text-xs text-neutral-500 mb-2 font-semibold">EXAMPLES OF DECISION POINTS IN COMMON FLOWS</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 leading-relaxed">
+<span class="text-teal-400">Evaluated post → Appropriate tone?</span><br/>
+<span class="text-neutral-400">  ✓ yes → proceed to publication</span><br/>
+<span class="text-neutral-400">  ✗ no → go back to rewriting with tone instructions</span><br/><br/>
+<span class="text-teal-400">Proposal generated → Is the client new or returning?</span><br/>
+<span class="text-neutral-400">  → new: add an introduction section</span><br/>
+<span class="text-neutral-400">  → recurring: skip the introduction, go straight to the scope</span><br/><br/>
+<span class="text-teal-400">Analysis complete → Risk level?</span><br/>
+<span class="text-neutral-400">  → low: approve automatically</span><br/>
+<span class="text-neutral-400">  → high: route for human review</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center">
+<span class="mr-2">📊</span> Why branches matter
+          </h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li>• Turn rules that were in your head into documented logic</li>
+<li>• Let the system handle different cases without you having to step in each time</li>
+<li>• They are the foundation of systems that scale — more cases, same logic</li>
+</ul>
+</div>
+<div class="bg-teal-900/20 rounded-xl border border-teal-500/30 p-6">
+<h3 class="text-lg font-semibold text-teal-400 mb-3 flex items-center">
+<span class="mr-2">🧩</span> How to design
+          </h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li>• Use a different shape (diamond or triangle) for decision points</li>
+<li>• Write the condition as a question: “approved?”</li>
+<li>• Put “yes” and “no” (or the relevant values) on the outgoing arrows</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">🤝 Where the human steps in — AI × human handoff</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        A system without clear handoffs is an automation that fails silently or a manual task that never gets done. <strong class="text-teal-400">The handoff is the point where the baton changes hands</strong> — and it needs to be explicit in both directions.
+      </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-teal-900/20 rounded-xl border border-teal-500/30 p-6">
+<h4 class="font-bold text-teal-400 mb-4">Human → AI (you provide input to the system)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-teal-400">→</span><span>Provides the topic, brief, or initial context</span></li>
+<li class="flex items-start space-x-2"><span class="text-teal-400">→</span><span>Define the quality criteria before running it</span></li>
+<li class="flex items-start space-x-2"><span class="text-teal-400">→</span><span>Injects the knowledge base (T3 baseline briefing)</span></li>
+<li class="flex items-start space-x-2"><span class="text-teal-400">→</span><span>Decides which path to take at high-stakes decision points</span></li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-bold text-neutral-300 mb-4">AI → Human (the system delivers it to you)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-neutral-400">←</span><span>Delivers a draft for approval or adjustment</span></li>
+<li class="flex items-start space-x-2"><span class="text-neutral-400">←</span><span>Presents the risk analysis for a human decision</span></li>
+<li class="flex items-start space-x-2"><span class="text-neutral-400">←</span><span>Flags when the result doesn’t meet the criteria</span></li>
+<li class="flex items-start space-x-2"><span class="text-neutral-400">←</span><span>Delivers the final product for publication/sending (always a human action)</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">⚡</span> Practical handoff rule
+        </h3>
+<p class="text-neutral-300">Label each box in your workflow with <strong>AI</strong> or <strong>H</strong> (human). If you have 3 AI boxes in a row without any <strong>H</strong> in the middle, check: is there any point where your judgment should come in? A system without human involvement isn’t efficient—it’s risky.</p>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">🔁 The loop logic: Think → Act → Evaluate → Adjust → Act</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The invisible bottleneck in the anchor case existed because there was no loop. AI generated—and stopped. <strong class="text-teal-400">With the loop, the system evaluates its own output and corrects itself</strong> until you reach the criterion you defined.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<p class="text-xs text-neutral-500 mb-3 font-semibold">THE THINK → ACT → EVALUATE → ADJUST → ACT LOOP — IN PROMPTS</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 leading-relaxed">
+<span class="text-teal-400">[THINK — you decide before starting]</span><br/>
+<span class="text-neutral-400">Criteria: the post needs a hook in the 1st line, ≤ 150 words, and 1 clear CTA.<br/></span><br/>
+<span class="text-teal-400">[ACT — AI generates]</span><br/>
+<span class="text-neutral-400">"Write a post about [topic] following the criteria above."<br/></span><br/>
+<span class="text-teal-400">[EVALUATE — AI evaluates its own result]</span><br/>
+<span class="text-neutral-400">"Now analyze the post it generated: does it meet the 3 criteria? For each one, answer yes/no and why."<br/></span><br/>
+<span class="text-teal-400">[ADJUST → ACT — if there was a "no"]</span><br/>
+<span class="text-neutral-400">"Rewrite the post to fix the points that didn't meet the criteria. Don't change what was already correct."</span>
+</div>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-teal-400 font-semibold text-sm mb-1">Think</h4>
+<p class="text-xs text-neutral-400">Criteria defined beforehand — not afterward. Quality isn’t a post-hoc judgment.</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-teal-400 font-semibold text-sm mb-1">Act</h4>
+<p class="text-xs text-neutral-400">AI executes based on the criteria. The first draft is rarely the final one.</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-teal-400 font-semibold text-sm mb-1">Evaluate</h4>
+<p class="text-xs text-neutral-400">Compares the output against a criterion. AI self-evaluates better when you’ve provided the rubric.</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-teal-400 font-semibold text-sm mb-1">Adjust</h4>
+<p class="text-xs text-neutral-400">Fix only what failed — don't start from scratch. The loop closes.</p>
+</div>
+</div>
+</section>
+<!-- TOPICO 7 -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-teal-500/20 text-teal-400 font-bold text-xl">7</span>
+<h2 class="text-2xl font-bold">🌐 Overview of tools — no intimidation, no dependency</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        This track is 100% no-code. But there's a horizon beyond chat—and learning about it without getting intimidated is part of the architecture layer. <strong class="text-teal-400">You don’t need these tools right now. But you’ll want to know they exist.</strong>
+</p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center">
+<span class="mr-2">📊</span> The complexity spectrum—where you are now is enough
+        </h3>
+<div class="space-y-3">
+<div class="flex items-start space-x-3">
+<span class="text-teal-400 font-bold text-sm min-w-fit">Level 1 (now):</span>
+<span class="text-neutral-300 text-sm">Prompts chained together in a chat. Flow run manually. Works today, with no setup.</span>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-blue-400 font-bold text-sm min-w-fit">Level 2 (later):</span>
+<span class="text-neutral-300 text-sm">No-code tools (n8n, Make, Zapier): the workflow runs automatically. Requires learning the interface.</span>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-neutral-400 font-bold text-sm min-w-fit">Level 3 (when it makes sense):</span>
+<span class="text-neutral-300 text-sm">AI agents: multiple AIs collaborating in different roles. High complexity, high power.</span>
+</div>
+</div>
+</div>
+<div class="bg-teal-900/20 rounded-xl border border-teal-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-teal-400 mb-3 flex items-center">
+<span class="mr-2">🧩</span> Why starting at Level 1 is an advantage, not a limitation
+        </h3>
+<p class="text-neutral-300 mb-3">Those who understand the concepts of flow, handoff, and loop can learn any tool in hours—because the tool implements what they already have in mind.</p>
+<p class="text-neutral-300">Those who start with the tool without understanding the concept become dependent on its settings and get lost when the tool changes.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">⚡</span> Slow User Shortcut
+        </h3>
+<p class="text-neutral-300">Your simplest system starts now, in chat, with 3 prompts in sequence. When you want to automate, the workflow will already be documented—just map it to your chosen tool. <strong>You’re not behind. You’re building the foundation.</strong></p>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-teal-900/40 via-dark-800 to-dark-800 rounded-xl border border-teal-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center">
+<span class="mr-3">🔄</span> Module Summary
+        </h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3">
+<span class="text-teal-400 mt-1">✓</span>
+<div><strong class="text-white">Workflow vs. command</strong><span class="text-neutral-400"> — the process decides what comes next; you don’t have to remember to do it</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-teal-400 mt-1">✓</span>
+<div><strong class="text-white">AI roles in the system</strong><span class="text-neutral-400"> — interpret, generate, evaluate, compare; the final decision is always human</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-teal-400 mt-1">✓</span>
+<div><strong class="text-white">Sketch it on paper first</strong><span class="text-neutral-400"> — reveal bottlenecks before using any tool</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-teal-400 mt-1">✓</span>
+<div><strong class="text-white">Decision points</strong><span class="text-neutral-400"> — turn implicit judgment into an explicit rule in the workflow</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-teal-400 mt-1">✓</span>
+<div><strong class="text-white">AI × human handoffs</strong><span class="text-neutral-400"> — each box marked with who’s responsible</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-teal-400 mt-1">✓</span>
+<div><strong class="text-white">Think → Act → Evaluate → Adjust loop</strong><span class="text-neutral-400"> — criteria defined in advance, evaluation by AI, surgical adjustments</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-teal-400 mt-1">✓</span>
+<div><strong class="text-white">Tools as the horizon</strong><span class="text-neutral-400"> — no-code and agents exist, but chat is enough to get started</span></div>
+</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-6">
+<h3 class="font-semibold text-teal-400 mb-2">📦 Module deliverable:</h3>
+<p class="text-neutral-300 text-sm">Draw the workflow for 1 of your processes with: at least 4 boxes, marked AI/human handoffs, at least 1 decision point, and 1 return arrow (loop). You can use paper, sticky notes, or any simple diagramming tool. This is the flowchart that module 5.2 will turn into an executable system.</p>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-teal-400 mb-2">Next Module:</h3>
+<p class="text-neutral-300">5.2 — Building a mini-system: from a workflow on paper to an executable workflow in a chat, with prompt chaining and the minimum 3-box system</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">
+            ← Track 5
+          </a>
+<a class="flex-1 text-center px-6 py-3 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-500 transition-colors" href="modulo-5-2.html">
+            Next Module →
+          </a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>AI Knowledge Engineering — Applied Intelligence Pyramid · 2026</p>
+<p class="mt-2">A course <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

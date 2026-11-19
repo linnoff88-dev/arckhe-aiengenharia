@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Module 1.1 — Anatomy of a Good Prompt | AI Pyramid</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+
+    /* Light mode overrides - OBRIGATORIO */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Light mode - cores de acento (trilha emerald) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.06); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha1/modulo-1-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha1/modulo-1-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha1/modulo-1-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha1/modulo-1-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-1-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha1/modulo-1-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">AI Pyramid</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intent</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Context</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Effective use</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Architecture</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolution</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-emerald-400" href="../../index.html">Start</a>
+<span>/</span>
+<a class="hover:text-emerald-400" href="index.html">Track 1</a>
+<span>/</span>
+<span class="text-emerald-400">Module 1.1</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">
+        MODULE 1.1
+      </span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🧬 Anatomy of a good prompt</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        The difficult email case: an unhappy customer is waiting for a response, and you have AI by your side. The same request, written 4 different ways, generates 4 completely different responses. In this module, you’ll see the progression unfold—and learn the 5 parts that shape the result.
+      </p>
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">7</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">45</div>
+<div class="text-xs text-neutral-400">Minutes</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">Basic</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">Practice</div>
+<div class="text-xs text-neutral-400">Type</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- TOPICO 1 -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🧬 The 5 parts of a strong prompt</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Every professional prompt, in any tool and for any task, is built from the same 5 pieces: <strong class="text-emerald-400">Role, Task, Context, Format, and Example</strong>. You don't always need to use all 5—but you need to know which one is missing when the answer is bad.
+      </p>
+<div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Visual equation: Role plus Task plus Context plus Format plus Example result in a strong prompt" class="w-full h-auto" role="img" viewbox="0 0 1000 200">
+<defs>
+<lineargradient id="m11-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#34d399"></stop><stop offset="1" stop-color="#10b981"></stop>
+</lineargradient>
+<filter height="180%" id="m11-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m11-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#10b981" opacity="0.12" r="1.3"></circle>
+</pattern>
+</defs>
+<rect fill="url(#m11-grid)" height="200" width="1000" x="0" y="0"></rect>
+<g font-family="Inter,sans-serif" font-size="13" font-weight="600">
+<rect fill="#0e1b26" height="60" rx="10" stroke="#38bdf8" stroke-width="2" width="108" x="30" y="70"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="84" y="96">Role</text>
+<text fill="#9ad6ff" font-size="10.5" font-weight="400" text-anchor="middle" x="84" y="115">who the AI is</text>
+<text fill="#34d399" font-size="26" font-weight="600" text-anchor="middle" x="155" y="108">+</text>
+<rect fill="#0e1b26" height="60" rx="10" stroke="#38bdf8" stroke-width="2" width="108" x="172" y="70"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="226" y="96">Task</text>
+<text fill="#9ad6ff" font-size="10.5" font-weight="400" text-anchor="middle" x="226" y="115">what to do</text>
+<text fill="#34d399" font-size="26" font-weight="600" text-anchor="middle" x="297" y="108">+</text>
+<rect fill="#0e1b26" height="60" rx="10" stroke="#38bdf8" stroke-width="2" width="108" x="314" y="70"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="368" y="96">Context</text>
+<text fill="#9ad6ff" font-size="10.5" font-weight="400" text-anchor="middle" x="368" y="115">what to know</text>
+<text fill="#34d399" font-size="26" font-weight="600" text-anchor="middle" x="439" y="108">+</text>
+<rect fill="#0e1b26" height="60" rx="10" stroke="#38bdf8" stroke-width="2" width="108" x="456" y="70"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="510" y="96">Format</text>
+<text fill="#9ad6ff" font-size="10.5" font-weight="400" text-anchor="middle" x="510" y="115">how to deliver</text>
+<text fill="#34d399" font-size="26" font-weight="600" text-anchor="middle" x="581" y="108">+</text>
+<rect fill="#0e1b26" height="60" rx="10" stroke="#38bdf8" stroke-width="2" width="108" x="598" y="70"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="652" y="96">Example</text>
+<text fill="#9ad6ff" font-size="10.5" font-weight="400" text-anchor="middle" x="652" y="115">model of what good looks like</text>
+<text fill="#34d399" font-size="26" font-weight="600" text-anchor="middle" x="730" y="108">=</text>
+</g>
+<g filter="url(#m11-glow)"><rect fill="#0e2018" height="84" rx="14" stroke="url(#m11-grad)" stroke-width="2.5" width="212" x="756" y="58"></rect></g>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="18" font-weight="600" text-anchor="middle" x="862" y="94">Strong Prompt</text>
+<text fill="#a7e8cd" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="862" y="118">get the right response on the first try</text>
+</svg>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<p class="text-xs text-neutral-500 mb-2 font-semibold">THE 5 PARTS IN A REAL PROMPT (the course's universal template)</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 leading-relaxed">
+<span class="text-emerald-400">You are [ROLE].</span> <span class="text-neutral-500">← who the AI should be</span><br/>
+<span class="text-emerald-400">Your task is [TASK].</span> <span class="text-neutral-500">← clear verb + clear object</span><br/>
+<span class="text-emerald-400">Context: [WHAT IT NEEDS TO KNOW].</span> <span class="text-neutral-500">← situation, audience, constraints</span><br/>
+<span class="text-emerald-400">Format: [LIST / TABLE / STEPS].</span> <span class="text-neutral-500">← what the response should look like</span><br/>
+<span class="text-emerald-400">Example of what I want: [1 EXAMPLE].</span> <span class="text-neutral-500">← one template is worth a thousand instructions</span>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> Practical Tip
+        </h3>
+<p class="text-neutral-300">When an answer is bad, <strong>don't rewrite everything</strong> — diagnose which of the 5 parts was missing. Generic answer? Context was missing. Wrong tone? Role was missing. Messy? Format was missing. Diagnosis is faster than starting over.</p>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">⚔️ The difficult email — the same request in 4 versions</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The situation: <strong class="text-emerald-400">a client bought your product, had a delivery problem, and sent an angry message</strong>. You need to respond today. See what happens with each version of the request—this progression is the heart of the entire track.
+      </p>
+<div class="space-y-6 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="text-emerald-400 font-bold">V1</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Version 1 — the raw request</h4>
+<div class="bg-dark-900 rounded-lg p-3 font-mono text-sm text-neutral-300 mb-3">respond to this client</div>
+<p class="text-neutral-300 text-sm"><strong class="text-red-400">What you get:</strong> a polite, completely generic text — “Dear customer, we regret what happened...” It could be for any company, any problem, any planet. You wouldn’t use it.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="text-emerald-400 font-bold">V2</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Version 2 — task + situation (basic context is added)</h4>
+<div class="bg-dark-900 rounded-lg p-3 font-mono text-sm text-neutral-300 mb-3">Write a reply to a customer who complained that the order arrived 5 days late and the packaging was damaged.</div>
+<p class="text-neutral-300 text-sm"><strong class="text-primary">What you get:</strong> visible improvement—the response mentions the delay and the packaging. But the tone sounds like a corporate robot and offers nothing concrete. Usable with a lot of editing.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="text-emerald-400 font-bold">V3</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Version 3 — role, tone, and what to offer are added</h4>
+<div class="bg-dark-900 rounded-lg p-3 font-mono text-sm text-neutral-300 mb-3">You are the owner of a small shop who values every customer. Write a reply to a customer who complained (order 5 days late, damaged packaging). Tone: human and direct, no legalese. Own the mistake without groveling. Offer: free reshipment OR a refund, their choice.</div>
+<p class="text-neutral-300 text-sm"><strong class="text-emerald-400">What you get:</strong> a human-sounding response that owns the problem and offers a concrete solution. It would already be ready to send with minimal edits.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+<span class="text-emerald-400 font-bold">V4</span>
+</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-emerald-500/30">
+<h4 class="font-semibold text-emerald-400 mb-2">Version 4 — all 5 parts complete (format + example)</h4>
+<div class="bg-dark-900 rounded-lg p-3 font-mono text-sm text-neutral-300 mb-3">[Everything from V3] + Format: maximum 120 words, 3 paragraphs — acknowledge, resolve, win them back. End with a personal sentence, not "sincerely." Example of the tone I want: "Hi João, you’re absolutely right to be upset — and I’ll take care of this today."</div>
+<p class="text-neutral-300 text-sm"><strong class="text-emerald-400">What you get:</strong> an email ready to send, in YOUR tone, the right length, with a thoughtful emotional structure. From “reply to this customer” to this: about 60 extra seconds of typing.</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ What a weak request does</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Outsources ALL decisions to AI (tone, length, offer)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Generates an answer that works for everyone = works for no one</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>It forces you to rewrite—the “time savings” turn into a loss</span></li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ What a strong request does</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>You make the important decisions; AI executes exceptionally well</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Answer in your tone, for your situation and your client</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>60 more seconds on the request = 20 fewer minutes of editing</span></li>
+</ul>
+</div>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Progression</h4>
+<p class="text-xs text-neutral-400">V1→V4: each added part visibly improves it</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Your decisions</h4>
+<p class="text-xs text-neutral-400">Tone, offer, and structure: you decide</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Cost × return</h4>
+<p class="text-xs text-neutral-400">1 min of prompting saves 20 min of editing</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Reuse</h4>
+<p class="text-xs text-neutral-400">V4 becomes a template in module 1.2</p>
+</div>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">📐 Output format — ask for the answer in the format you’ll use</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Those who don’t ask for a format get whatever format AI chooses—usually long paragraphs. The right question to ask before making a request: <strong class="text-emerald-400">"where will this answer end up?"</strong> In a spreadsheet? Ask for a table. For a checklist? Ask for steps. For a slide? Ask for 5-word bullets.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<p class="text-xs text-neutral-500 mb-2 font-semibold">FORMAT PHRASES TO ADD TO THE END OF ANY PROMPT</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 leading-relaxed">
+"Answer in a table with columns: X, Y, Z."<br/>
+"List them in numbered steps, 8 steps max."<br/>
+"Summarize in 5 bullets of no more than 10 words each."<br/>
+"Prose, maximum 150 words, 2 paragraphs."<br/>
+"Start with a 2-line summary, then the details."<br/>
+"End with a question that helps me decide on the next step."
+        </div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center">
+<span class="mr-2">📊</span> Why this matters so much
+        </h3>
+<ul class="space-y-2 text-neutral-300">
+<li><strong>Format = usable response without rework.</strong> The requested table is ready to paste directly into the spreadsheet.</li>
+<li><strong>Format limits length.</strong> "Max. 150 words" nips verbosity in the bud.</li>
+<li><strong>Format forces clarity.</strong> Asking for it "in steps" forces the AI to organize its reasoning in sequence.</li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> Practical Tip
+        </h3>
+<p class="text-neutral-300">Forgot to ask for a format? No worries: <strong>ask for reformatting in the next turn</strong> — “turn this into a table,” “now in 5 bullets.” AI reformats its own work in seconds. You saw this in the first guided conversation in module 1.0.</p>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">🎚️ The right level of explanation</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The same content can be explained to a child, a layperson, or an expert—and AI does all three perfectly, <strong class="text-emerald-400">as long as you say which one you want</strong>. See the same topic (compound interest) at 3 levels:
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<p class="text-xs text-neutral-500 mb-2 font-semibold">LEVEL 1 — CHILD (to help YOU understand something from scratch)</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 mb-4">
+Explain compound interest as if I were 10, using an everyday analogy. Maximum 5 sentences.
+        </div>
+<p class="text-xs text-neutral-500 mb-2 font-semibold">LEVEL 2 — INTERESTED BEGINNER (to create accessible content)</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 mb-4">
+Explain compound interest to an adult who has never invested, with 1 example in reais and 1 common mistake beginners make. Conversational tone, no formulas.
+        </div>
+<p class="text-xs text-neutral-500 mb-2 font-semibold">LEVEL 3 — EXPERT (to work as an equal)</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300">
+Explain the effect of compound interest when comparing a post-fixed CDB and Tesouro IPCA+ over a 10-year horizon, considering regressive income tax. You can use technical terms.
+        </div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> Practical Tip — the superpower of joining late
+        </h3>
+<p class="text-neutral-300">The “child” level is the <strong>the world’s best private tutor for yourself</strong>. Any term in AI, finance, or technology that intimidates you: "explain it like I'm 10 years old." Then move up to level 2. In two questions, you'll understand what seemed inaccessible—that's how a latecomer quickly becomes a veteran.</p>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">🧪 Examples and intentional comparisons</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The most powerful instruction there is isn’t an instruction—it’s a <strong class="text-emerald-400">example</strong>. AI imitates style, structure, and tone with impressive accuracy. Instead of describing what you want in 3 paragraphs, show 1 sample.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<p class="text-xs text-neutral-500 mb-2 font-semibold">TECHNIQUE 1 — STYLE EXAMPLE ("write like me")</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 mb-4">
+Write a notice about [TOPIC] in the same style as this example of mine:
+"[PASTE A TEXT YOU LIKE HERE]"
+Keep the tone, sentence length, and way of ending.
+        </div>
+<p class="text-xs text-neutral-500 mb-2 font-semibold">TECHNIQUE 2 — GUIDED COMPARISON (to make better decisions)</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300">
+Compare [OPTION A] with [OPTION B] in a table using these criteria: cost, effort, risk, and timeline. At the end, recommend one for my situation: [YOUR SITUATION in 1 sentence].
+        </div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center">
+<span class="mr-2">🔍</span> Why examples work so well
+        </h3>
+<p class="text-neutral-300 mb-2">Remember module 1.0: AI is a pattern machine. An example is a <strong>concrete standard</strong> — much easier to follow than abstract adjectives like “professional but casual.”</p>
+<p class="text-neutral-300">Practical rule: <strong>1 good example &gt; 3 paragraphs of description.</strong> Examples of what NOT to do work too ("avoid this style: ...").</p>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">💀 The 3 mistakes that kill a prompt</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        90% of bad answers aren't the AI's fault — they're caused by one of these 3 killers in your request. Learn to spot them in the prompt itself <strong class="text-emerald-400">before pressing enter</strong>.
+      </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ The killer</h4>
+<ul class="space-y-4 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>Generic:</strong> "Talk about digital marketing" — no audience, no objective, no focus</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>Ambiguous:</strong> "Summarize the document and the important points from the meeting" — summarize what, exactly? Both? Together?</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span><strong>No format:</strong> "Give me a few post ideas" — how many? For which platform? With a caption or just a concept?</span></li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ The antidote</h4>
+<ul class="space-y-4 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Scope:</strong> "3 digital marketing strategies for a neighborhood bakery with a R$300/month budget"</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>One request per sentence:</strong> "1) Summarize the document in 5 bullets. 2) Then list the meeting decisions."</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Specification:</strong> "5 Instagram post ideas, each with a 1-line hook + image suggestion"</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center">
+<span class="mr-2">⚠️</span> The intern test
+        </h3>
+<p class="text-neutral-300">Before you send, ask: <strong>"if I gave this request to a smart intern on their first day, would they know exactly what to deliver?"</strong> If the answer is no, the AI doesn’t know either. Fix the request, not the response.</p>
+</div>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Generic</h4>
+<p class="text-xs text-neutral-400">Antidote: narrow the scope (audience + goal + limit)</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Ambiguous</h4>
+<p class="text-xs text-neutral-400">One request per sentence, numbered</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">No format</h4>
+<p class="text-xs text-neutral-400">Antidote: quantity + structure + destination</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-emerald-400 font-semibold text-sm mb-1">Intern test</h4>
+<p class="text-xs text-neutral-400">A clear request for a person is clear for AI</p>
+</div>
+</div>
+</section>
+<!-- TOPICO 7 -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">7</span>
+<h2 class="text-2xl font-bold">🔁 Iteration — improve the response without starting over</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The classic beginner’s mistake: the response is 80% good, so they delete everything and rewrite the prompt from scratch. A fluent user does it differently: <strong class="text-emerald-400">uses the 80% and adjusts the 20% in the next turn</strong>. This is cumulative—use it.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<p class="text-xs text-neutral-500 mb-2 font-semibold">REFINEMENT COMMANDS — the vocabulary for the second round</p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 leading-relaxed">
+"Keep everything, just shorten paragraph 2."<br/>
+"Good structure, but the tone is too formal — make it more casual."<br/>
+"Replace example 3 with one from [FIELD]."<br/>
+"Now the same thing, in a version for WhatsApp (3 lines)."<br/>
+"Give me 3 variations of the title only."<br/>
+"What did you assume that I didn't say? List it before continuing."
+        </div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center">
+<span class="mr-2">📊</span> The math of iteration
+        </h3>
+<p class="text-neutral-300">A reasonable prompt + 2 well-chosen tweaks gets you to the result <strong>faster</strong> than 10 attempts at a “perfect prompt” from scratch — because each adjustment builds on what’s already good. Perfectionism in the first prompt is beginner procrastination in disguise.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">⚡</span> Slow User Shortcut
+        </h3>
+<p class="text-neutral-300">Memorize ONE adjustment command: <strong>"keep everything, just change X"</strong>. It's the Swiss Army knife of iteration—it preserves what's good and surgically replaces what isn't. With this one habit, you'll already iterate better than most people.</p>
+</div>
+</section>
+<!-- RESUMO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center">
+<span class="mr-3">🧬</span> Module Summary
+        </h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">The 5 parts</strong><span class="text-neutral-400"> — Role, Task, Context, Format, Example: the framework for any professional prompt</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">The difficult email V1→V4</strong><span class="text-neutral-400"> — 60 more seconds spent on the prompt, 20 fewer minutes of editing</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">Format for the destination</strong><span class="text-neutral-400"> — ask “where will this answer end up?” and request it in the format you’ll use</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">Explanation level</strong><span class="text-neutral-400"> — child / layperson / expert: the personal tutor for anyone starting late</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">The 3 killers and the intern test</strong><span class="text-neutral-400"> — generic, ambiguous, no format: fix the request, not the response</span></div>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-emerald-400 mt-1">✓</span>
+<div><strong class="text-white">Cumulative iteration</strong><span class="text-neutral-400"> — “keep everything, just change X” is worth more than starting over 10 times</span></div>
+</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-6">
+<h3 class="font-semibold text-emerald-400 mb-2">📦 Module deliverable:</h3>
+<p class="text-neutral-300 text-sm">Take 3 real prompts you’ve already used (or would use) and rewrite each one with the 5 parts. Test the before and after in the tool. Save the 3 “after” versions—they’ll be the first items in your library in module 1.2.</p>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-emerald-400 mb-2">Next Module:</h3>
+<p class="text-neutral-300">1.2 — Reusable prompts: from improvisation to a template (and 10 ready-to-use templates)</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-1-0.html">
+            ← Previous Module
+          </a>
+<a class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors" href="modulo-1-2.html">
+            Next Module →
+          </a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>AI Knowledge Engineering — Applied Intelligence Pyramid · 2026</p>
+<p class="mt-2">A course <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

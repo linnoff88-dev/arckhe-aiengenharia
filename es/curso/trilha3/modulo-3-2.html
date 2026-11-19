@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Módulo 3.2 — Ingeniería de contexto en la práctica | Ruta 3</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124, 58, 237, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124, 58, 237, 0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124, 58, 237, 0.18); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124, 58, 237, 0.06); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    @keyframes m32-pulse { 0%,100% { opacity:.6 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .m32-step { animation: m32-pulse 3s ease-in-out infinite; }
+      .m32-step:nth-child(2){animation-delay:.4s}
+      .m32-step:nth-child(3){animation-delay:.8s}
+      .m32-step:nth-child(4){animation-delay:1.2s}
+      .m32-step:nth-child(5){animation-delay:1.6s}
+    }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha3/modulo-3-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha3/modulo-3-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha3/modulo-3-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha3/modulo-3-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-3-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">Pirámide de la IA</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intención</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Contexto</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Aprovechamiento</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Arquitectura</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolución</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+<nav class="text-sm text-neutral-500">
+<a class="hover:text-neutral-300 transition-colors" href="../../index.html">Inicio</a>
+<span class="mx-2">/</span>
+<a class="hover:text-neutral-300 transition-colors" href="index.html">Ruta 3</a>
+<span class="mx-2">/</span>
+<span class="text-neutral-300">Módulo 3.2</span>
+</nav>
+</div>
+<!-- HEADER DO MÓDULO -->
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-10 border-b border-dark-600 mt-4">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center space-x-3 mb-4">
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full">MÓDULO 3.2</span>
+<span class="text-neutral-500 text-sm">~55 min</span>
+</div>
+<h1 class="text-3xl sm:text-4xl font-bold mb-3">🛠️ Ingeniería de contexto en la práctica</h1>
+<p class="text-neutral-400 max-w-3xl">De la teoría a una carpeta funcional: briefing permanente, estructura de carpetas, reciclaje del historial, dossier de audiencia, barreras de seguridad, mini briefing de 5 líneas y aplicación según cada profesión.</p>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+<!-- TÓPICO 1 — Briefing permanente -->
+<section id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+<div>
+<h2 class="text-2xl font-bold">📋 El briefing permanente</h2>
+<p class="text-neutral-400 text-sm">El documento que siempre pegas o adjuntas</p>
+</div>
+</div>
+<!-- SVG: escada de evolução do briefing -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-4 mb-6 overflow-hidden">
+<svg aria-label="Escalera de evolución: sin briefing → briefing improvisado → briefing permanente reutilizable → resultado consistente" class="w-full h-auto" role="img" viewbox="0 0 900 180">
+<defs>
+<filter height="180%" id="m32-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="28" id="m32-grid" patternunits="userSpaceOnUse" width="28">
+<circle cx="1" cy="1" fill="#a855f7" opacity="0.1" r="1.1"></circle>
+</pattern>
+<marker id="m32-ah" markerheight="8" markerwidth="8" orient="auto" refx="5.5" refy="4">
+<path d="M0,0 L7,4 L0,8 L2,4 Z" fill="#c084fc"></path>
+</marker>
+</defs>
+<rect fill="url(#m32-grid)" height="180" width="900"></rect>
+<!-- Degraus -->
+<g class="m32-step">
+<rect fill="#1a1230" height="40" rx="10" stroke="#6b7280" stroke-width="1.8" width="160" x="30" y="120"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="110" y="145">Sin briefing</text>
+<text fill="#6b7280" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="110" y="162">resultado genérico</text>
+</g>
+<path d="M190,130 L250,110" fill="none" marker-end="url(#m32-ah)" opacity="0.5" stroke="#c084fc" stroke-width="1.5"></path>
+<g class="m32-step">
+<rect fill="#1a1230" height="40" rx="10" stroke="#38bdf8" stroke-width="1.8" width="160" x="250" y="90"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="330" y="115">Briefing improvisado</text>
+<text fill="#6b7280" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="330" y="132">reescribe cada vez</text>
+</g>
+<path d="M410,100 L470,75" fill="none" marker-end="url(#m32-ah)" opacity="0.5" stroke="#c084fc" stroke-width="1.5"></path>
+<g class="m32-step">
+<rect fill="#1a1230" height="40" rx="10" stroke="#a855f7" stroke-width="2" width="180" x="470" y="55"></rect>
+<text fill="#ddc2ff" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="560" y="80">Briefing permanente</text>
+<text fill="#a855f7" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="560" y="97">copia en 30 segundos</text>
+</g>
+<path d="M650,70 L710,50" fill="none" marker-end="url(#m32-ah)" opacity="0.5" stroke="#c084fc" stroke-width="1.5"></path>
+<g class="m32-step" filter="url(#m32-glow)">
+<rect fill="#1a1230" height="50" rx="12" stroke="#c084fc" stroke-width="2.5" width="160" x="710" y="25"></rect>
+</g>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="790" y="52">Consistencia</text>
+<text fill="#ddc2ff" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="790" y="68">cada sesión, mismo tono ✓</text>
+</svg>
+</div>
+<!-- Briefing-base Kit T3 — copy-paste principal -->
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-purple-400 font-semibold text-sm">📦 Kit T3 — Briefing base del proyecto</span>
+<span class="text-xs text-neutral-500 font-mono">copy-paste</span>
+</div>
+<pre class="text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap"># Proyecto: [nombre del proyecto o empresa]
+
+Quiénes somos / voz: [describe el tono en 2-3 adjetivos + 1 ejemplo de una frase con el tono adecuado]
+
+Público: [quién leerá/usará el resultado — perfil, nivel, principales necesidades]
+
+Buenos ejemplos: [pega 1-2 fragmentos de texto que apruebes como referencia de tono]
+
+Ejemplos que debes evitar: [pega 1 fragmento o describe lo que no quieres]
+
+Reglas/límites: [lista lo que nunca puede aparecer — competidores, promesas, jerga]
+
+Resultado esperado en esta sesión: [lo que quieres generar ahora]
+
+⚠ Datos sensibles: anonimizados (lista de verificación OK)</pre>
+</div>
+<!-- Tip box -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-6">
+<div class="flex items-start space-x-3">
+<span class="text-primary text-xl flex-shrink-0">💡</span>
+<div>
+<div class="text-primary font-semibold mb-1">Dónde guardar el briefing base</div>
+<p class="text-sm text-neutral-400">Guárdalo donde ya abres algo todos los días: Google Docs, Notion, Apple Notes, un documento Word fijo. El criterio no es cuál es la app más sofisticada, sino cuál tiene fricción cero para abrir y copiar.</p>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📋</div>
+<div class="text-xs font-semibold text-neutral-300">Briefing permanente</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📄</div>
+<div class="text-xs font-semibold text-neutral-300">Documento vivo</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">⚡</div>
+<div class="text-xs font-semibold text-neutral-300">Guía rápida</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🔄</div>
+<div class="text-xs font-semibold text-neutral-300">Consistencia</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 2 — Estrutura de pastas -->
+<section id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+<div>
+<h2 class="text-2xl font-bold">📁 Estructura de carpetas que la IA entiende</h2>
+<p class="text-neutral-400 text-sm">Organizar para reutilizar, no para archivar</p>
+</div>
+</div>
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+<p class="text-neutral-300 leading-relaxed">Una carpeta de contexto no es un archivo muerto: es un recurso vivo. La estructura adecuada permite actualizarla por módulos: cuando cambia el público, actualizas solo /publico. Cuando se agrega un ejemplo nuevo, va en /exemplos-bons.</p>
+</div>
+<!-- Estrutura de pastas copy-paste -->
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-purple-400 font-semibold text-sm">Estructura recomendada: carpeta de contexto</span>
+<span class="text-xs text-neutral-500 font-mono">copy-paste</span>
+</div>
+<pre class="text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap">📁 contexto-[nome-do-projeto]/
+├── 📄 briefing.md          ← quem somos, voz, objetivo geral
+├── 📄 publico.md           ← perfil, dores, linguagem que ressoa
+├── 📄 restricoes.md        ← o que nunca pode aparecer
+├── 📁 exemplos-bons/       ← textos aprovados como referência
+│   ├── email-exemplo-1.txt
+│   └── post-exemplo-2.txt
+├── 📁 exemplos-ruins/      ← estilos a evitar
+│   └── contra-exemplo.txt
+└── 📄 checklist-privacidade.md  ← confirmação que dados são seguros</pre>
+</div>
+<!-- Grid fazer vs evitar na organização -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-5">
+<div class="text-purple-400 font-semibold mb-3">✓ Organízalo así</div>
+<ul class="space-y-2 text-sm text-neutral-400">
+<li class="flex items-start space-x-2"><span class="text-purple-400">→</span><span>Un archivo por tipo de contexto (briefing separado del público)</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">→</span><span>Nombres de archivo descriptivos y sin tildes</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">→</span><span>Fecha de última actualización al inicio de cada archivo</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">→</span><span>Ejemplos reales, no imaginados</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 border border-red-500/30 rounded-xl p-5">
+<div class="text-red-400 font-semibold mb-3">✗ Evita</div>
+<ul class="space-y-2 text-sm text-neutral-400">
+<li class="flex items-start space-x-2"><span class="text-red-400">→</span><span>Todo en un único documento gigante, imposible de actualizar</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">→</span><span>Archivos desactualizados sin fecha de revisión</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">→</span><span>Mezclar proyectos diferentes en la misma carpeta</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">→</span><span>Guardar en la carpeta "Downloads" sin estructura</span></li>
+</ul>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📁</div>
+<div class="text-xs font-semibold text-neutral-300">Carpeta de contexto</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🧩</div>
+<div class="text-xs font-semibold text-neutral-300">Modular</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🔄</div>
+<div class="text-xs font-semibold text-neutral-300">Actualización fácil</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🗂️</div>
+<div class="text-xs font-semibold text-neutral-300">Por tipo de contexto</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 3 — Histórico como contexto -->
+<section id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+<div>
+<h2 class="text-2xl font-bold">♻️ Transformar el historial en contexto reutilizable</h2>
+<p class="text-neutral-400 text-sm">Tus conversaciones pasadas valen oro</p>
+</div>
+</div>
+<!-- Tip box -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-6">
+<div class="flex items-start space-x-3">
+<span class="text-primary text-xl flex-shrink-0">💡</span>
+<div>
+<div class="text-primary font-semibold mb-1">El contexto que construiste sin darte cuenta</div>
+<p class="text-sm text-neutral-400">Toda buena conversación en la que corregiste a la IA, aprobaste un fragmento o tomaste una decisión contiene contexto implícito. Ese contexto desaparece cuando se cierra la sesión, pero puedes guardarlo antes.</p>
+</div>
+</div>
+</div>
+<!-- Timeline de extração -->
+<div class="space-y-3 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-sm">1</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200 mb-1">Al final de una buena conversación, pide el resumen</div>
+<p class="text-sm text-neutral-400 font-mono bg-dark-900/50 rounded p-2 mt-1">"Enumera las 5 decisiones principales que tomamos en esta conversación, las preferencias de tono que identificaste y los ejemplos que aprobé."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-sm">2</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200 mb-1">Pega el resumen en tu briefing base</div>
+<p class="text-sm text-neutral-400">Agrega una sección «Decisiones acumuladas» o «Preferencias confirmadas». Cada buena conversación añade una capa de precisión.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-sm">3</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200 mb-1">En la próxima sesión, empieza con el briefing actualizado</div>
+<p class="text-sm text-neutral-400">La IA «recuerda» todo lo que pegaste — aunque sea una conversación nueva. Es memoria manual, pero funciona.</p>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">♻️</div>
+<div class="text-xs font-semibold text-neutral-300">Reciclaje de sesión</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📌</div>
+<div class="text-xs font-semibold text-neutral-300">Decisiones acumuladas</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🧠</div>
+<div class="text-xs font-semibold text-neutral-300">Memoria manual</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📈</div>
+<div class="text-xs font-semibold text-neutral-300">Contexto creciente</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 4 — Dossiê de público -->
+<section id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+<div>
+<h2 class="text-2xl font-bold">🎯 Dossier del público objetivo</h2>
+<p class="text-neutral-400 text-sm">1 página que mejora todo</p>
+</div>
+</div>
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+<p class="text-neutral-300 leading-relaxed">La IA escribe para quien dices que es el lector. Sin un dossier, asume que es un lector adulto, educado y genérico. Con un dossier, los correos, las publicaciones y los textos llegan calibrados automáticamente al tono, el lenguaje y la profundidad adecuados.</p>
+</div>
+<!-- Template dossiê -->
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-purple-400 font-semibold text-sm">Plantilla: dossier del público (1 página)</span>
+<span class="text-xs text-neutral-500 font-mono">copy-paste</span>
+</div>
+<pre class="text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap"># Público objetivo: [nombre/descripción]
+
+Perfil: [rango de edad, profesión, nivel educativo relevante]
+
+Principales necesidades:
+- [necesidad 1 — qué les quita el sueño]
+- [necesidad 2 — frustración recurrente]
+- [necesidad 3 — qué no pueden hacer por sí solos]
+
+Lenguaje que conecta: [términos que usan, tono preferido, ejemplos]
+
+Qué los aleja: [jerga que les irrita, tono que rechazan, lo que suena falso]
+
+Nivel de conocimiento sobre [tema]: [principiante / intermedio / avanzado]
+
+Cómo llegan a mí: [canal, contexto, estado emocional al llegar]</pre>
+</div>
+<!-- Comparação antes/depois -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-red-900/20 border border-red-500/30 rounded-xl p-5">
+<div class="text-red-400 font-semibold mb-2">✗ Sin expediente</div>
+<p class="text-sm text-neutral-400 italic">"Estimado profesional, nos complace presentarte nuestra innovadora solución, que sin duda traerá excelentes resultados para tu negocio..."</p>
+<p class="text-xs text-neutral-500 mt-2">Tono corporativo genérico. Nadie siente que le hablan.</p>
+</div>
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-5">
+<div class="text-purple-400 font-semibold mb-2">✓ Con dossier (público: freelancer principiante, 25 años)</div>
+<p class="text-sm text-neutral-400 italic">"Si pasaste las últimas dos semanas reescribiendo propuestas y aun así no recibiste respuesta, esta plantilla va a cambiar eso..."</p>
+<p class="text-xs text-neutral-500 mt-2">Habla directamente del problema real.</p>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🎯</div>
+<div class="text-xs font-semibold text-neutral-300">Dossier de público</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">😣</div>
+<div class="text-xs font-semibold text-neutral-300">Principales dolores</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🗣️</div>
+<div class="text-xs font-semibold text-neutral-300">Lenguaje que conecta</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">⚙️</div>
+<div class="text-xs font-semibold text-neutral-300">Calibración automática</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 5 — Restrições e guarda-corpos -->
+<section id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+<div>
+<h2 class="text-2xl font-bold">🚧 Restricciones y reglas internas como barreras de protección</h2>
+<p class="text-neutral-400 text-sm">Qué nunca debe sugerir la IA</p>
+</div>
+</div>
+<!-- Tip box -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-6">
+<div class="flex items-start space-x-3">
+<span class="text-primary text-xl flex-shrink-0">💡</span>
+<div>
+<div class="text-primary font-semibold mb-1">Salvaguardas: contexto que previene errores</div>
+<p class="text-sm text-neutral-400">Sin restricciones explícitas, la IA improvisa dentro de lo que considera razonable, que puede no coincidir con lo que tu empresa, cliente o área de compliance considera razonable. Escribir los límites es crear seguridad operativa antes de que surja el problema.</p>
+</div>
+</div>
+</div>
+<!-- Exemplos de restrições por categoria -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold mb-3 text-sm">🏢 Empresas</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li>"Nunca menciones a la competencia por su nombre"</li>
+<li>"No menciones precios sin aprobación comercial"</li>
+<li>"Evita las proyecciones financieras específicas"</li>
+<li>"No prometas plazos sin validación interna"</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold mb-3 text-sm">⚖️ Legal/Cumplimiento</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li>"Sigue las reglas del CONAR para publicidad"</li>
+<li>"No hagas afirmaciones de salud sin fundamento"</li>
+<li>"Incluye los descargos exigidos por ley"</li>
+<li>"Evita el lenguaje que pueda interpretarse como una garantía"</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold mb-3 text-sm">🎨 Tono/Estilo</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li>"No uses jerga"</li>
+<li>"Evita el humor en la comunicación de crisis"</li>
+<li>"Nunca uses la voz pasiva"</li>
+<li>"Prohibido: 'sinergia', 'disruptivo', 'ecosistema'"</li>
+</ul>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🚧</div>
+<div class="text-xs font-semibold text-neutral-300">Salvaguardas</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">⚖️</div>
+<div class="text-xs font-semibold text-neutral-300">Compliance</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📜</div>
+<div class="text-xs font-semibold text-neutral-300">Lista de prohibiciones</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🔐</div>
+<div class="text-xs font-semibold text-neutral-300">Seguridad operativa</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 6 — Mini-briefing de 5 linhas -->
+<section id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+<div>
+<h2 class="text-2xl font-bold">⚡ Atajo del rezagado: el mini brief de 5 líneas</h2>
+<p class="text-neutral-400 text-sm">Contexto mínimo que ya funciona</p>
+</div>
+</div>
+<!-- Box destaque -->
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+<p class="text-neutral-300 text-lg leading-relaxed">El briefing completo es lo ideal, pero lo perfecto es enemigo de lo hecho. El mini briefing de 5 líneas es el <em>contexto mínimo viable</em>: en 2 minutos multiplicas la calidad de la respuesta sin necesidad de armar la carpeta completa.</p>
+</div>
+<!-- As 5 linhas -->
+<div class="space-y-3 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">1</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200">Quién soy / quién es la empresa</div>
+<p class="text-sm text-neutral-400 mt-1 font-mono">Ej.: "Soy consultor de marketing digital y atiendo a pymes del sector minorista."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">2</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200">A quién va dirigido este resultado</div>
+<p class="text-sm text-neutral-400 mt-1 font-mono">Ej.: "Para mi cliente, dueño de una tienda de ropa, de 45 años y sin conocimientos técnicos."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">3</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200">Objetivo de este resultado específico</div>
+<p class="text-sm text-neutral-400 mt-1 font-mono">Ej.: "Generar 3 opciones de texto para la publicación de Instagram de la tienda por el Día de la Madre."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">4</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200">Tono deseado</div>
+<p class="text-sm text-neutral-400 mt-1 font-mono">Ej.: "Tono cálido, sin jerga, para mujeres de 35-55 años."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">5</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200">Una restricción crítica</div>
+<p class="text-sm text-neutral-400 mt-1 font-mono">Ej.: "No menciones promociones de precio: esta vez no tenemos descuentos."</p>
+</div>
+</div>
+</div>
+<!-- Copy-paste mini-briefing -->
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-purple-400 font-semibold text-sm">⚡ Plantilla: mini brief de 5 líneas</span>
+<span class="text-xs text-neutral-500 font-mono">copy-paste</span>
+</div>
+<pre class="text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap">Contexto rápido:
+1. Quién soy: [tu función / empresa en 1 línea]
+2. Para quién: [perfil del lector/usuario del resultado]
+3. Objetivo ahora: [qué quieres generar en esta sesión]
+4. Tono: [3 adjetivos o 1 frase que describa el tono]
+5. Restricción crítica: [qué no puede aparecer]
+
+[Coloca aquí el pedido real]</pre>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">⚡</div>
+<div class="text-xs font-semibold text-neutral-300">Mini briefing</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">5️⃣</div>
+<div class="text-xs font-semibold text-neutral-300">5 líneas de contexto</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🎯</div>
+<div class="text-xs font-semibold text-neutral-300">MVP de contexto</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🚀</div>
+<div class="text-xs font-semibold text-neutral-300">Baja fricción</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 7 — Na sua profissão -->
+<section id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">7</span>
+<div>
+<h2 class="text-2xl font-bold">👤 En tu profesión</h2>
+<p class="text-neutral-400 text-sm">5 perfiles: profesor, abogado, vendedor, gestor, creador</p>
+</div>
+</div>
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+<p class="text-neutral-300 leading-relaxed">El principio es universal; el contexto es específico. Cada profesión tiene su conjunto estándar de contexto. A continuación, qué poner en la carpeta según tu trabajo.</p>
+</div>
+<!-- Grid 5 profissões -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">👨‍🏫</div>
+<div class="text-purple-400 font-bold mb-2">Profesor</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li><span class="text-purple-400">📌</span> Perfil del grupo (rango de edad, nivel)</li>
+<li><span class="text-purple-400">📌</span> Plan de estudios/programa de la asignatura</li>
+<li><span class="text-purple-400">📌</span> Ejemplos de clases que funcionaron</li>
+<li><span class="text-purple-400">📌</span> Dificultades recurrentes de los alumnos</li>
+<li><span class="text-purple-400">📌</span> Restricciones del plan de clase vigente</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">⚖️</div>
+<div class="text-purple-400 font-bold mb-2">Abogado</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li><span class="text-purple-400">📌</span> Modelos de piezas del jurado (anonimizados)</li>
+<li><span class="text-purple-400">📌</span> Jurisprudencia habitual del tribunal</li>
+<li><span class="text-purple-400">📌</span> Perfil del cliente (PJ/PF, sector)</li>
+<li><span class="text-purple-400">📌</span> Tono del tribunal (formal, objetivo)</li>
+<li><span class="text-purple-400">📌</span> Legislación aplicable al caso</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">💼</div>
+<div class="text-purple-400 font-bold mb-2">Vendedor</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li><span class="text-purple-400">📌</span> ICP (perfil del cliente ideal)</li>
+<li><span class="text-purple-400">📌</span> Objeciones más frecuentes</li>
+<li><span class="text-purple-400">📌</span> Propuesta de valor única</li>
+<li><span class="text-purple-400">📌</span> Ciclo de ventas y etapa</li>
+<li><span class="text-purple-400">📌</span> Casos de éxito anonimizados</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">📊</div>
+<div class="text-purple-400 font-bold mb-2">Gerente</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li><span class="text-purple-400">📌</span> Metas del trimestre/semestre</li>
+<li><span class="text-purple-400">📌</span> Restricciones presupuestarias actuales</li>
+<li><span class="text-purple-400">📌</span> Perfil del equipo (antigüedad, brechas)</li>
+<li><span class="text-purple-400">📌</span> Decisiones ya tomadas (no se reabren)</li>
+<li><span class="text-purple-400">📌</span> Stakeholders y sus intereses</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">🎥</div>
+<div class="text-purple-400 font-bold mb-2">Creador de contenido</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li><span class="text-purple-400">📌</span> Nicho y posicionamiento</li>
+<li><span class="text-purple-400">📌</span> 3 publicaciones con mejor rendimiento</li>
+<li><span class="text-purple-400">📌</span> Perfil del público (canal, edad)</li>
+<li><span class="text-purple-400">📌</span> ¿Voz: informal, inspiradora, técnica?</li>
+<li><span class="text-purple-400">📌</span> Lo que el público odia (críticas reales)</li>
+</ul>
+</div>
+</div>
+<!-- Tip box -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-6">
+<div class="flex items-start space-x-3">
+<span class="text-primary text-xl flex-shrink-0">💡</span>
+<div>
+<div class="text-primary font-semibold mb-1">¿No estás en ninguna de estas categorías?</div>
+<p class="text-sm text-neutral-400">Usa este marco: (1) ¿Qué información sobre mi trabajo necesitaría la IA para no equivocarse de tono? (2) ¿Qué ejemplos de buenos resultados tengo guardados? (3) ¿Qué nunca puede aparecer en mi contexto laboral? Estas 3 preguntas sirven para cualquier profesión.</p>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">👤</div>
+<div class="text-xs font-semibold text-neutral-300">Contexto profesional</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🎯</div>
+<div class="text-xs font-semibold text-neutral-300">Especificidad</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📁</div>
+<div class="text-xs font-semibold text-neutral-300">Carpeta profesional</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🔧</div>
+<div class="text-xs font-semibold text-neutral-300">Aplicación inmediata</div>
+</div>
+</div>
+</section>
+<!-- RESUMO FINAL -->
+<section class="bg-dark-800 rounded-2xl border border-purple-500/30 p-8" id="resumo">
+<h2 class="text-2xl font-bold mb-6 flex items-center space-x-3">
+<span class="text-purple-400">📋</span>
+<span>Resumen del Módulo 3.2</span>
+</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+<div>
+<h3 class="text-purple-400 font-semibold mb-3">Lo que aprendiste</h3>
+<ul class="space-y-2 text-sm text-neutral-400">
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Briefing permanente y Kit T3 listo para usar</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Estructura de carpetas que la IA entiende</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Cómo reutilizar el historial de conversaciones</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Dossier del público objetivo en 1 página</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Restricciones como barreras operativas</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Mini briefing de 5 líneas (atajo)</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Contexto específico por profesión</span></li>
+</ul>
+</div>
+<div>
+<h3 class="text-purple-400 font-semibold mb-3">Lo que sigue</h3>
+<div class="bg-dark-700 rounded-xl p-4 text-sm text-neutral-400 space-y-2">
+<p><span class="text-neutral-300 font-medium">T4 Aprovechamiento</span> — tienes prompts y contexto. Ahora viene la capa que hace que esos activos escalen: patrones reutilizables, playbooks y la biblioteca viva de inteligencia operativa.</p>
+<p class="text-xs text-neutral-500 mt-2">La carpeta de contexto que preparas aquí es el insumo principal de la T4. El contexto sin aprovechamiento es materia prima; con aprovechamiento, se convierte en sistema.</p>
+</div>
+</div>
+</div>
+<!-- Entregável -->
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-5 mb-6">
+<div class="flex items-start space-x-3">
+<span class="text-2xl">📦</span>
+<div>
+<div class="text-purple-400 font-semibold text-lg mb-1">Entregable de esta ruta</div>
+<p class="text-neutral-300 font-semibold">Briefing base del proyecto listo para volver a adjuntar</p>
+<p class="text-sm text-neutral-400 mt-1">Usa el Kit T3 (briefing-base) para un proyecto real. Crea la estructura de carpetas. Completa el dossier del público. Prepara el mini briefing para usarlo cuando tengas prisa. Este conjunto es tu contexto operativo: crece con cada sesión.</p>
+</div>
+</div>
+</div>
+<!-- Navegação -->
+<div class="flex gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 hover:bg-dark-600 rounded-lg font-semibold transition-colors" href="modulo-3-1.html">
+          ← Módulo 3.1
+        </a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-semibold transition-colors" href="../trilha4/index.html">
+          Próxima Ruta: Aprovechamiento →
+        </a>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>Ingeniería de Conocimiento de la IA — Pirámide de la Inteligencia Aplicada · 2026</p>
+<p class="mt-2">Un curso <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+    function updateThemeIcon() {
+      if (document.documentElement.classList.contains('dark')) {
+        darkIcon.classList.add('hidden');
+        lightIcon.classList.remove('hidden');
+      } else {
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+      }
+    }
+    updateThemeIcon();
+
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      updateThemeIcon();
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+      document.documentElement.classList.remove('dark');
+      updateThemeIcon();
+    }
+  </script>
+</body>
+</html>

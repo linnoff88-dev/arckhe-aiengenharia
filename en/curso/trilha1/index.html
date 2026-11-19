@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Track 1 — Prompt Engineering | The AI Pyramid</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+
+    /* Light mode overrides - OBRIGATORIO */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Light mode - cores de acento (trilha emerald) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.06); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-emerald-400 { color: #059669; }
+    html:not(.dark) .hover\:border-emerald-500\/30:hover { border-color: rgba(5, 150, 105, 0.25); }
+
+    /* Light mode - hovers das demais trilhas (nav) */
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+
+    /* Light mode - boxes auxiliares */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - SVG futurista contido */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha1/" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha1/" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha1/" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha1/" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="./" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha1/" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">AI Pyramid</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intent</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Context</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Effective use</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Architecture</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolution</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">
+        TRACK 1 · PYRAMID FOUNDATION
+      </span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">✍️ Prompt Engineering</h1>
+<p class="text-lg text-neutral-400 max-w-3xl mb-2">
+<strong class="text-emerald-400">"A prompt is a question."</strong> The pyramid's entry point: learn to ask in a way that gets the AI to give the right answer—and discover that the quality of the response depends on the quality of the request.
+      </p>
+<p class="text-neutral-400 max-w-3xl">
+<strong class="text-neutral-300">The case in this learning path—the difficult email:</strong> you need to respond to an unhappy customer. The same request, in 4 versions, produces 4 completely different responses. In this learning path, you’ll see that difference in action — and learn how to create it.
+      </p>
+<!-- Stats Grid -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">3</div>
+<div class="text-xs text-neutral-400">Modules</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">21</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">~2h</div>
+<div class="text-xs text-neutral-400">Duration</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">Basic</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- HERO SVG -->
+<div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-12 overflow-hidden">
+<svg aria-label="The five parts of a prompt—role, task, context, format, and example—come together in a strong prompt that generates a precise response" class="w-full h-auto" role="img" viewbox="0 0 1000 240">
+<defs>
+<lineargradient id="t1h-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#34d399"></stop><stop offset="1" stop-color="#10b981"></stop>
+</lineargradient>
+<filter height="180%" id="t1h-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="t1h-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#10b981" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="t1h-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#34d399"></path></marker>
+<marker id="t1h-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#t1h-grid)" height="240" width="1000" x="0" y="0"></rect>
+<g fill="none" opacity="0.5" stroke="#38bdf8" stroke-width="1.8">
+<path d="M196,38  C300,38 320,120 422,120" marker-end="url(#t1h-ahc)"></path>
+<path d="M196,79  C300,79 320,120 422,120" marker-end="url(#t1h-ahc)"></path>
+<path d="M196,120 L422,120" marker-end="url(#t1h-ahc)"></path>
+<path d="M196,161 C300,161 320,120 422,120" marker-end="url(#t1h-ahc)"></path>
+<path d="M196,202 C300,202 320,120 422,120" marker-end="url(#t1h-ahc)"></path>
+</g>
+<path d="M608,120 L790,120" fill="none" marker-end="url(#t1h-ah)" opacity="0.65" stroke="#34d399" stroke-width="2"></path>
+<g font-family="Inter,sans-serif" font-size="13" font-weight="600">
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="60" y="22"></rect><text fill="#bfe6ff" text-anchor="middle" x="128" y="43">Role</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="60" y="63"></rect><text fill="#bfe6ff" text-anchor="middle" x="128" y="84">Task</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="60" y="104"></rect><text fill="#bfe6ff" text-anchor="middle" x="128" y="125">Context</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="60" y="145"></rect><text fill="#bfe6ff" text-anchor="middle" x="128" y="166">Format</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="60" y="186"></rect><text fill="#bfe6ff" text-anchor="middle" x="128" y="207">Example</text></g>
+</g>
+<g filter="url(#t1h-glow)"><rect fill="#0e2018" height="64" rx="14" stroke="url(#t1h-grad)" stroke-width="2.5" width="186" x="422" y="88"></rect></g>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="18" font-weight="600" text-anchor="middle" x="515" y="114">Strong Prompt</text>
+<text fill="#a7e8cd" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="515" y="135">structured request</text>
+<rect fill="#0e2018" height="64" rx="14" stroke="#34d399" stroke-width="2" width="170" x="790" y="88"></rect>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="875" y="114">Accurate answer</text>
+<text fill="#a7e8cd" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="875" y="135">less rework</text>
+</svg>
+</div>
+<!-- MAPA DA TRILHA -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold mb-6">Learning path map</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-5 transition-all" href="#modulo-1-0">
+<div class="flex items-center justify-between mb-2">
+<span class="text-emerald-400 font-bold text-sm">1.0</span>
+<span class="text-xs text-neutral-500">~40 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-emerald-400 transition-colors">🌱 Zero Basics</h3>
+<p class="text-xs text-neutral-400">Never used AI? Start here</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-5 transition-all" href="#modulo-1-1">
+<div class="flex items-center justify-between mb-2">
+<span class="text-emerald-400 font-bold text-sm">1.1</span>
+<span class="text-xs text-neutral-500">~45 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-emerald-400 transition-colors">🧬 Anatomy of the Prompt</h3>
+<p class="text-xs text-neutral-400">4 versions, 4 results</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-emerald-500/30 p-5 transition-all" href="#modulo-1-2">
+<div class="flex items-center justify-between mb-2">
+<span class="text-emerald-400 font-bold text-sm">1.2</span>
+<span class="text-xs text-neutral-500">~35 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-emerald-400 transition-colors">📚 Reusable Prompts</h3>
+<p class="text-xs text-neutral-400">Stop rewriting from scratch</p>
+</a>
+</div>
+</section>
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<!-- MODULO 1.0 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-1-0">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-emerald-400 font-bold">1.0</span>
+<span class="text-xs text-neutral-500">~40 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">🌱 Zero Basics — for those just starting out</h3>
+<p class="text-neutral-400 text-sm">Never used AI (or tried it and gave up)? This module busts the myths, teaches the essential vocabulary, and gets you to your first useful conversation—including how to use it without getting burned.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🤖</span>
+<div>
+<span class="font-medium">What generative AI is</span>
+<span class="text-neutral-500 text-sm ml-2">- In 1 honest sentence, without hype</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">A program that learned patterns from billions of texts and uses those patterns to generate new responses to your request. It’s not magic or consciousness—it’s highly sophisticated language prediction.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Understanding what AI really is eliminates fear and false expectations. Those who expect magic get frustrated; those who understand the mechanism learn to get the most out of it.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Generative AI, language patterns, text prediction, realistic expectations.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🔤</span>
+<div>
+<span class="font-medium">Essential vocabulary</span>
+<span class="text-neutral-500 text-sm ml-2">- Model, prompt, response, context window</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The 4 words you need to keep from getting lost: model (the “brain”), prompt (your request), response (what comes back), and context window (the conversation’s memory).</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Every tutorial, course, and conversation about AI uses these terms. With 4 concepts, you can read any material without feeling left out.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Model, prompt, response, context window, conversation memory.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">🖱️</span>
+<div>
+<span class="font-medium">How to open it and chat</span>
+<span class="text-neutral-500 text-sm ml-2">- ChatGPT, Claude and Gemini: where to click</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The literal step-by-step: create a free account, find the text field, send your first message, and continue the conversation in the 3 most popular tools.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">The initial barrier is practical, not intellectual. Ten minutes on “where to click” eliminates weeks of procrastination.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">ChatGPT, Claude, Gemini, free account, ongoing conversation.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🧱</span>
+<div>
+<span class="font-medium">The 3 myths of the latecomer</span>
+<span class="text-neutral-500 text-sm ml-2">- "It’s late", "it’s only for programmers", "it’s going to replace me"</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">Breaking down the 3 fears that most often paralyze people just starting out—and replacing each one with reality.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">For latecomers, the barrier is emotional before it’s technical. Dispelling the myths frees up energy to really learn.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">The delay myth, the programmer myth, the replacement myth, the foundation advantage.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">💬</span>
+<div>
+<span class="font-medium">First guided conversation</span>
+<span class="text-neutral-500 text-sm ml-2">- Copy, paste, and watch it happen</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">A script of 3 ready-to-copy-and-paste messages: a simple request, a refinement, and a format request. You see the conversation evolve in practice.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">The first win changes everything. Anyone who sees AI solve something of THEIRS in 5 minutes never puts it off again.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">First prompt, refinement, back-and-forth conversation, quick win.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🛡️</span>
+<div>
+<span class="font-medium">Verification: use it without getting burned</span>
+<span class="text-neutral-500 text-sm ml-2">- Hallucinations and the 3 checks to make before using the result</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">AI sometimes makes up facts with complete confidence—this is called hallucination. Here you’ll learn the 3 checks (source? date? does it make sense?) to do before using any response.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">A single invented fact in an email, contract, or lesson destroys your credibility. Verification is the habit that separates the professional from the amateur.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Hallucination, the 3 checks, calibrated confidence, responsibility for the outcome.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">🚧</span>
+<div>
+<span class="font-medium">What AI does NOT do well</span>
+<span class="text-neutral-500 text-sm ml-2">- And why knowing this protects you</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The map of weak spots: very recent facts, complex calculations, decisions that involve legal responsibility, and anything that depends on information it doesn’t have.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Those who know the limits use the tool where it shines and avoid the embarrassment of trusting it where it stumbles.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Model limitations, knowledge cutoff, human responsibility, use where it excels.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-1-0')">
+          View in Modal
+        </button>
+<a class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors" href="modulo-1-0.html">
+          View Full
+        </a>
+</div>
+</div>
+<!-- MODULO 1.1 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-1-1">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-emerald-400 font-bold">1.1</span>
+<span class="text-xs text-neutral-500">~45 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">🧬 Anatomy of a good prompt</h3>
+<p class="text-neutral-400 text-sm">The difficult email in 4 versions: from “reply to this customer” to the complete prompt. You’ll learn the 5 parts that turn a weak request into a spot-on response.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🧬</span>
+<div>
+<span class="font-medium">The 5 parts of a strong prompt</span>
+<span class="text-neutral-500 text-sm ml-2">- Role · Task · Context · Format · Example</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The structure behind any professional prompt: who AI should be (role), what to do (task), what it needs to know (context), how to deliver it (format), and a sample of the result (example).</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">It’s the difference between hoping the response turns out well and building a good response. The 5 parts apply to any tool and any task.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Role, task, context, format, example, reusable structure.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">⚔️</span>
+<div>
+<span class="font-medium">Weak request × strong request</span>
+<span class="text-neutral-500 text-sm ml-2">- The difficult email in 4 versions</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The same real request—responding to an unhappy customer—written at 4 quality levels, with all 4 responses side by side. The difference is visible, not theoretical.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Seeing the progression from a generic answer to one ready to send is more convincing than any explanation—and shows you how to reproduce it.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Quality progression, generic request, specificity, difficult email case.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">📐</span>
+<div>
+<span class="font-medium">Output format</span>
+<span class="text-neutral-500 text-sm ml-2">- List, table, step-by-step instructions</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">Say HOW the response should be delivered: as a list, comparison table, numbered steps, or short prose. If you don't ask for a format, you get whatever format AI chooses.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">The right format eliminates rework: a ready-made table can be pasted into a spreadsheet; a set of steps becomes a checklist. You stop reformatting responses.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Output format, table, list, step-by-step, usable response.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🎚️</span>
+<div>
+<span class="font-medium">The right level of explanation</span>
+<span class="text-neutral-500 text-sm ml-2">- Child, layperson, or expert</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">Ask for the explanation at the level of the intended reader: "like you're explaining it to a 10-year-old," "for an interested non-expert," "for a specialist in the field." Same content, three levels of depth.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">It’s the cheapest trick for understanding any difficult subject — and for creating material suited to YOUR audience instead of stiff text.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Depth level, target audience for the response, layered explanation.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🧪</span>
+<div>
+<span class="font-medium">Examples and comparisons with a purpose</span>
+<span class="text-neutral-500 text-sm ml-2">- Show what you want</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">Include an example of the desired result in the prompt ("I want something in this style: ...") and ask for comparisons ("compare A with B in a table"). AI imitates examples with impressive accuracy.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">One example is worth more than three paragraphs of instructions. It’s the fastest way to transfer your taste and standards to the machine.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Example in the prompt, style imitation, guided comparison, few-shot.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">💀</span>
+<div>
+<span class="font-medium">Errors that kill the prompt</span>
+<span class="text-neutral-500 text-sm ml-2">- Generic, ambiguous, no format</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The 3 response killers: a generic request ("tell me about..."), ambiguity (two possible interpretations), and no format. Plus the antidote for each.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">90% of bad answers come from these 3 mistakes — not the AI. Spotting them in YOUR prompt fixes the answer before it even exists.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Generic request, ambiguity, missing format, self-diagnosis of the prompt.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">🔁</span>
+<div>
+<span class="font-medium">Iteration without starting over</span>
+<span class="text-neutral-500 text-sm ml-2">- Improve the answer, not the entire prompt</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The art of the second turn: “make it shorter,” “more formal,” “change example 2,” “keep everything, just improve the title.” The conversation picks up where it left off—without rewriting anything.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Iterating is faster than perfecting the initial prompt. Those who master refinement get results in 3 turns, not 10 attempts from scratch.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Incremental refinement, adjustment instructions, back-and-forth conversation, reduced effort.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-1-1')">
+          View in Modal
+        </button>
+<a class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors" href="modulo-1-1.html">
+          View Full
+        </a>
+</div>
+</div>
+<!-- MODULO 1.2 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-1-2">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-emerald-400 font-bold">1.2</span>
+<span class="text-xs text-neutral-500">~35 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">📚 Reusable prompts</h3>
+<p class="text-neutral-400 text-sm">From improvisation to a model: 10 ready-to-use templates with variables, where to store them, how to name them — and the 3 that handle 80% of your day. You'll leave with your personal library started.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">⏳</span>
+<div>
+<span class="font-medium">Always rewriting is a waste</span>
+<span class="text-neutral-500 text-sm ml-2">- The hidden cost of improvising</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The cost no one calculates: if you write the same kind of request 5× a week, improvising costs hours a month—and quality fluctuates each time.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Recognizing the waste is the trigger for changing the habit. It’s also the first seed of layer 4 (Leverage).</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Cost of improvisation, repetition, consistency, prompts as assets.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🧩</span>
+<div>
+<span class="font-medium">Anatomy of a template</span>
+<span class="text-neutral-500 text-sm ml-2">- Variables [IN BRACKETS]</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">A strong prompt where the changing parts become variables: [AUDIENCE], [TOPIC], [TONE]. When it’s time to use it, you just fill in the brackets.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">It’s the secret to reuse: a well-made template works for dozens of situations by changing 3 words.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Template, variable, fill-in, prompt generalization.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">📚</span>
+<div>
+<span class="font-medium">10 ready-to-use templates</span>
+<span class="text-neutral-500 text-sm ml-2">- Copy it today, use it forever</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">Summary, email, explanation, brainstorm, text review, comparison, lesson plan, sales proposal, post, and document analysis — 10 complete, tested templates, ready to paste.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">It’s the starter kit for your library: you don’t start from zero, you start from 10.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Template kit, frequent use cases, starter library.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🗄️</span>
+<div>
+<span class="font-medium">Where to store it</span>
+<span class="text-neutral-500 text-sm ml-2">- Doc, notes, or app — the right place is the one you open</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The real options—a simple doc, notes app, spreadsheet—with pros and cons. Golden rule: the best place is the one you ALREADY open every day.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">A library nobody opens is a dead library. Choosing where it lives determines whether the habit sticks.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Single location, zero friction, habit of checking.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🏷️</span>
+<div>
+<span class="font-medium">Naming and versioning</span>
+<span class="text-neutral-500 text-sm ml-2">- "email-cliente-bravo-v2" is easy to find; "prompt bom" isn’t</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">Simple naming convention (what-it-does + situation) and version (v1, v2, champion). When a template improves, the old version isn't lost — it becomes history.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">With 5 prompts, you remember them by heart; with 30, only the name saves you. Naming things well today helps you find them 6 months from now.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Naming conventions, versioning, champion template.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">⚡</span>
+<div>
+<span class="font-medium">Slow User Shortcut</span>
+<span class="text-neutral-500 text-sm ml-2">- The 3 templates that handle 80% of your day</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">No time for 10? Start with 3: summarize anything, write any message, explain any topic. They cover most real-world use for beginners.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Perfectionism slows you down more than ignorance. 3 templates in use are worth more than 30 saved.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Minimum viable, 80/20 rule, start small.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">💼</span>
+<div>
+<span class="font-medium">In your profession</span>
+<span class="text-neutral-500 text-sm ml-2">- The key template for each profile</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-emerald-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The template that pays off most in each profession: lesson plan (teacher), clause analysis (lawyer), follow-up (salesperson), meeting summary (manager), script (creator).</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Reskilling happens when AI solves YOUR problem, not an abstract example. Here, you see yourself in the mirror.</p>
+</div>
+<div>
+<span class="text-emerald-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Template by profession, highest-return case, immediate application.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-1-2')">
+          View in Modal
+        </button>
+<a class="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors" href="modulo-1-2.html">
+          View Full
+        </a>
+</div>
+</div>
+<!-- NAVEGACAO -->
+<div class="flex flex-col sm:flex-row gap-4 mt-12">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="../../index.html">
+        ← Back to Start
+      </a>
+<a class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors" href="../trilha2/index.html">
+        Next Track: Intention →
+      </a>
+</div>
+</main>
+<!-- MODAIS -->
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-1-0" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-emerald-400 font-bold">1.0</span>
+<span class="font-semibold">Zero Foundation — for those just joining</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-1-0.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-1-1" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-emerald-400 font-bold">1.1</span>
+<span class="font-semibold">Anatomy of a good prompt</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-1-1.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-1-2" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-emerald-400 font-bold">1.2</span>
+<span class="font-semibold">Reusable prompts</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-1-2.html"></iframe>
+</div>
+</div>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>AI Knowledge Engineering — Applied Intelligence Pyramid · 2026</p>
+<p class="mt-2">A course <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

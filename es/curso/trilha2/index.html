@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ruta 2 — Ingeniería de Intención | Pirámide de la IA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+
+    /* Light mode overrides - OBRIGATORIO */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Light mode - cores de acento (trilha blue) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37, 99, 235, 0.18); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-blue-400 { color: #2563eb; }
+    html:not(.dark) .hover\:border-blue-500\/30:hover { border-color: rgba(37, 99, 235, 0.25); }
+
+    /* Light mode - hovers das demais trilhas (nav) */
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+
+    /* Light mode - boxes auxiliares */
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - SVG futurista contido */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha2/" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha2/" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha2/" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha2/" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="./" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">Pirámide de la IA</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intención</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Contexto</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Aprovechamiento</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Arquitectura</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolución</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">
+        RUTA 2 · SEGUNDA CAPA DE LA PIRÁMIDE
+      </span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🎯 Ingeniería de Intención</h1>
+<p class="text-lg text-neutral-400 max-w-3xl mb-2">
+<strong class="text-blue-400">"La intención es el destino."</strong> Prompt perfecto, respuesta bonita, resultado cero. Esto ocurre cuando aciertas con la tarea, pero te equivocas de destino, y solo la intención lo corrige.
+      </p>
+<p class="text-neutral-400 max-w-3xl">
+<strong class="text-neutral-300">El caso de esta ruta — el post que no vendió nada:</strong> un creador pidió "un texto sobre el producto". La IA entregó exactamente eso: atractivo, informativo, sin ninguna venta. El prompt era correcto. La intención era equivocada. En esta ruta aprenderás a no volver a confundir la tarea con el destino.
+      </p>
+<!-- Stats Grid -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">2</div>
+<div class="text-xs text-neutral-400">Módulos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">14</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">~1h30</div>
+<div class="text-xs text-neutral-400">Duración</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Básico</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- HERO SVG -->
+<div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-3 sm:p-4 mb-12 overflow-hidden">
+<svg aria-label="Diagrama que muestra cómo la misma tarea, con intenciones diferentes —informar, vender, generar autoridad—, produce tres resultados completamente distintos y llega al destino correcto o equivocado" class="w-full h-auto" role="img" viewbox="0 0 1000 240">
+<defs>
+<lineargradient id="t2h-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#60a5fa"></stop><stop offset="1" stop-color="#3b82f6"></stop>
+</lineargradient>
+<filter height="180%" id="t2h-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="t2h-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#3b82f6" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="t2h-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#60a5fa"></path></marker>
+<marker id="t2h-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+<marker id="t2h-ahx" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#f87171"></path></marker>
+</defs>
+<rect fill="url(#t2h-grid)" height="240" width="1000" x="0" y="0"></rect>
+<!-- Prompt / Tarefa central -->
+<g filter="url(#t2h-glow)">
+<rect fill="#0e1622" height="64" rx="12" stroke="url(#t2h-grad)" stroke-width="2.5" width="160" x="60" y="88"></rect>
+</g>
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="14" font-weight="700" text-anchor="middle" x="140" y="113">La misma tarea</text>
+<text fill="#bcd6ff" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="140" y="133">"texto sobre producto"</text>
+<!-- 3 intenções divergindo -->
+<path d="M222,120 C310,120 330,50 400,50" fill="none" marker-end="url(#t2h-ahc)" stroke="#38bdf8" stroke-width="1.8"></path>
+<path d="M222,120 L400,120" fill="none" marker-end="url(#t2h-ahc)" stroke="#38bdf8" stroke-width="1.8"></path>
+<path d="M222,120 C310,120 330,190 400,190" fill="none" marker-end="url(#t2h-ahc)" stroke="#38bdf8" stroke-width="1.8"></path>
+<!-- Labels intenção -->
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="310" y="42">intención: informar</text>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="310" y="112">intención: vender</text>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="310" y="182">intención: autoridad</text>
+<!-- Caixas resultado -->
+<rect fill="#0e1622" height="52" rx="10" stroke="#38bdf8" stroke-width="1.8" width="160" x="400" y="24"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="480" y="46">Publicación educativa</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="480" y="64">los lectores aprenden</text>
+<rect fill="#0e1622" height="52" rx="10" stroke="#38bdf8" stroke-width="1.8" width="160" x="400" y="94"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="480" y="116">Publicación de conversión</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="480" y="134">los lectores actúan</text>
+<rect fill="#0e1622" height="52" rx="10" stroke="#38bdf8" stroke-width="1.8" width="160" x="400" y="164"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="480" y="186">Publicación de autoridad</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="480" y="204">los lectores confían</text>
+<!-- Setas para destinos -->
+<path d="M562,50 L680,50" fill="none" marker-end="url(#t2h-ah)" stroke="#60a5fa" stroke-width="1.8"></path>
+<path d="M562,120 L680,120" fill="none" marker-end="url(#t2h-ah)" stroke="#60a5fa" stroke-width="1.8"></path>
+<path d="M562,190 L680,190" fill="none" marker-end="url(#t2h-ahx)" stroke="#f87171" stroke-width="1.8"></path>
+<!-- Destinos -->
+<rect fill="#0e1622" height="40" rx="9" stroke="#60a5fa" stroke-width="1.8" width="150" x="680" y="30"></rect>
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="755" y="55">✓ Objetivo alcanzado</text>
+<g filter="url(#t2h-glow)">
+<rect fill="#0e1b2e" height="40" rx="9" stroke="url(#t2h-grad)" stroke-width="2.5" width="150" x="680" y="100"></rect>
+</g>
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="755" y="125">✓ La venta se concreta</text>
+<rect fill="#1c0e0e" height="40" rx="9" stroke="#f87171" stroke-width="1.8" width="150" x="680" y="170"></rect>
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="755" y="187">✗ Publicación publicada</text>
+<text fill="#fca5a5" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="755" y="203">cero ventas</text>
+</svg>
+</div>
+<!-- MAPA DA TRILHA -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold mb-6">Mapa de la ruta</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-blue-500/30 p-5 transition-all" href="#modulo-2-1">
+<div class="flex items-center justify-between mb-2">
+<span class="text-blue-400 font-bold text-sm">2.1</span>
+<span class="text-xs text-neutral-500">~45 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-blue-400 transition-colors">🎯 Tarea × Intención</h3>
+<p class="text-xs text-neutral-400">La diferencia que ningún prompt puede resolver</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-blue-500/30 p-5 transition-all" href="#modulo-2-2">
+<div class="flex items-center justify-between mb-2">
+<span class="text-blue-400 font-bold text-sm">2.2</span>
+<span class="text-xs text-neutral-500">~45 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-blue-400 transition-colors">🏹 Intención aplicada a resultados</h3>
+<p class="text-xs text-neutral-400">Del destino a la acción — en cualquier profesión</p>
+</a>
+</div>
+</section>
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- MODULO 2.1 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-2-1">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-blue-400 font-bold">2.1</span>
+<span class="text-xs text-neutral-500">~45 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">🎯 Tarea × Intención</h3>
+<p class="text-neutral-400 text-sm">El caso de la publicación que no vendió nada: prompt perfecto, texto bonito, ninguna venta. El problema no era el prompt, sino no haber indicado adónde debía llegar el texto. Aquí aprenderás la diferencia entre lo que pides y lo que quieres lograr.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- T1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🔀</span>
+<div>
+<span class="font-medium">La diferencia entre lo que pido y lo que quiero lograr</span>
+<span class="text-neutral-500 text-sm ml-2">- La tarea es el medio; la intención es el fin</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">La tarea es el verbo de la solicitud: «escribe», «resume», «enumera». La intención es el efecto que ese resultado debe causar en el mundo real: una venta, una decisión, un cambio de comportamiento. La IA ejecuta la tarea brillantemente y puede no llegar a la intención.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Sin esta distinción, evalúas la respuesta por lo que está escrito, cuando deberías evaluarla por lo que va a causar. Este cambio lo transforma todo: de «¿está bien?» a «¿va a funcionar?»</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Tarea, intención, destino, efecto deseado, evaluación por el resultado.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">❓</span>
+<div>
+<span class="font-medium">Las 6 preguntas de la intención</span>
+<span class="text-neutral-500 text-sm ml-2">- Objetivo, transformación, decisión, público, efecto, motivo</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Seis preguntas que revelan la intención antes de escribir una solicitud: (1) ¿Cuál es el objetivo final? (2) ¿Qué transformación quiero causar? (3) ¿Qué decisión permitirá tomar? (4) ¿Quién lo leerá/usará? (5) ¿Cuál es el efecto emocional/práctico deseado? (6) ¿Por qué importa ahora?</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La mayoría de las personas va directo a la solicitud sin responder estas preguntas, y la respuesta de la IA lo refleja exactamente: correcta en la superficie, equivocada en el destino. 2 minutos de reflexión ahorran 20 de retrabajo.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Las 6 preguntas, objetivo final, transformación deseada, público real, efecto esperado.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">📄</span>
+<div>
+<span class="font-medium">La misma publicación, 3 intenciones, 3 textos distintos</span>
+<span class="text-neutral-500 text-sm ml-2">- Informar · Vender · Autoridad</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">El producto: un curso en línea de fotografía. La tarea: «escribe una publicación sobre este curso». Tres intenciones completamente diferentes generan tres textos que ni siquiera parecen hablar del mismo producto: (1) informar: enseña fotografía al lector; (2) vender: lleva al lector a inscribirse; (3) autoridad: posiciona al creador como referente en el nicho.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Ver los tres lado a lado hace imposible volver atrás. Nunca más vas a pedir «un texto sobre X» sin declarar qué debe lograr ese texto.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Intención informativa, intención de conversión, intención de autoridad, efecto según la intención.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">💸</span>
+<div>
+<span class="font-medium">El costo de responder bien al objetivo equivocado</span>
+<span class="text-neutral-500 text-sm ml-2">- La excelencia en el lugar equivocado no resuelve nada</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Un texto brillante con la intención equivocada no es neutral: es activamente perjudicial. Ocupa espacio, consume la atención del lector, crea expectativas equivocadas y puede posicionarte de una forma que sabotea el objetivo real. El ejemplo de la publicación que no vendió nada: el texto era tan "educativo" que el lector aprendió, dio las gracias y se fue sin comprar.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La trampa de la calidad técnica: un texto bien escrito da la falsa impresión de que la tarea se cumplió. Reconocer este sesgo es el primer paso para evaluar el resultado, no la ejecución.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Costo oculto, sesgo hacia la calidad técnica, resultado frente a ejecución, objetivo equivocado.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">📝</span>
+<div>
+<span class="font-medium">Cómo declarar la intención dentro del prompt</span>
+<span class="text-neutral-500 text-sm ml-2">- El bloque de intención que va antes de la solicitud</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Una estructura de 2–4 líneas que pegas antes de cualquier solicitud: "Objetivo final: [...]. Público: [...]. Efecto/decisión que quiero generar: [...]." La IA usa estos datos para ajustar el tono, la estructura, la urgencia y el llamado a la acción, sin que tengas que indicar cada detalle.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La intención declarada convierte cualquier prompt promedio en uno dirigido. Es la diferencia entre dar un mapa y dar una dirección. Ya tienes el Kit T1 (estructura del prompt): el bloque de intención es el GPS que indica adónde ir.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Bloque de intención, Kit T2, declaración de objetivo, prompt dirigido.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🔬</span>
+<div>
+<span class="font-medium">Cuando la intención cambia toda la respuesta</span>
+<span class="text-neutral-500 text-sm ml-2">- 3 estudios rápidos en áreas diferentes</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Tres casos en contextos distintos donde cambiar la intención cambia toda la respuesta: (A) un correo sobre un retraso en la entrega — intención de «explicar» frente a «retener al cliente»; (B) un plan de clase sobre fracciones — intención de «enseñar el concepto» frente a «preparar para el examen»; (C) un análisis de contrato — intención de «enumerar cláusulas» frente a «señalar riesgos para el cliente».</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Casos concretos de distintas áreas demuestran que el principio no es exclusivo del marketing: es universal. Quien reconoce el patrón lo aplica en cualquier situación profesional.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Universalidad de la intención, intención contextual, casos cruzados, estándar transversal.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T7 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">✅</span>
+<div>
+<span class="font-medium">Checklist de intención antes de presionar Enter</span>
+<span class="text-neutral-500 text-sm ml-2">- 5 preguntas que toman 30 segundos y ahorran horas</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Una lista mental de 5 puntos que debes revisar antes de cualquier pedido importante: (1) ¿Sé cuál es el efecto real que quiero? (2) ¿Declaré ese efecto en el prompt? (3) ¿Está definido el público? (4) ¿La intención entra en conflicto con la tarea que pedí? (5) Si la IA hace exactamente lo que pedí, ¿me quedaré satisfecho?</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Los hábitos se construyen con disparadores. La lista de verificación es el disparador: algo concreto y rápido que transforma la intención en concepto y en práctica diaria. El punto 5 es el más poderoso: te obliga a anticipar el resultado antes de pedirlo.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Checklist de intención, disparador del hábito, anticipar el resultado, los 5 elementos.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-2-1')">
+          Ver en Modal
+        </button>
+<a class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors" href="modulo-2-1.html">
+          Ver completo
+        </a>
+</div>
+</div>
+<!-- MODULO 2.2 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-2-2">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-blue-400 font-bold">2.2</span>
+<span class="text-xs text-neutral-500">~45 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">🏹 Intención aplicada a resultados</h3>
+<p class="text-neutral-400 text-sm">De la teoría a la práctica: intención en contenido, ventas, gestión y atención al cliente, además del Atajo para quienes llegan tarde y la sección «En tu profesión» con 5 perfiles reales. Te llevarás una carta de intención reutilizable para tu trabajo.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- T1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🎬</span>
+<div>
+<span class="font-medium">Intención en contenido</span>
+<span class="text-neutral-500 text-sm ml-2">- Lo que el video/post debe CAUSAR</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Todo contenido existe para provocar algo: interacción, un nuevo seguidor, un clic en el enlace, una inscripción, un compartido, un comentario, un cambio de opinión. Antes de pedirle a la IA que cree contenido, defines la métrica humana de éxito y la declaras en el prompt.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Los creadores que trabajan con una intención clara producen menos y rinden más. La IA no va a preguntarte «¿qué quieres lograr?»; necesitas saberlo y decirlo.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Métrica humana del contenido, efecto deseado, intención del creador, causa vs. formato.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🛒</span>
+<div>
+<span class="font-medium">Intención en ventas</span>
+<span class="text-neutral-500 text-sm ml-2">- La decisión que debe tomar el lector</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">En ventas, la intención no es "informar sobre el producto", sino "llevar al lector a tomar una decisión específica": agendar una conversación, hacer clic en comprar, pedir una cotización, descargar el material. La IA escribe textos radicalmente distintos según cuál de esas decisiones declares.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Los textos de venta que no venden casi siempre tienen una intención vaga: «mostrar el producto», «explicar los beneficios». La pregunta correcta antes de escribir cualquier copy: «¿qué es lo único que quiero que haga el lector al terminar de leer?»</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Decisión del lector, call to action único, intención del copy, próximo paso claro.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">⚙️</span>
+<div>
+<span class="font-medium">Intención en decisiones y gestión</span>
+<span class="text-neutral-500 text-sm ml-2">- Qué decisión permite tomar</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Los análisis, informes y resúmenes existen para facilitar decisiones, no para existir por sí mismos. «Analiza los datos de ventas del trimestre» produce una cosa; «analiza los datos del trimestre para que yo decida si mantengo o elimino el producto X» produce algo completamente distinto y mucho más útil.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Los gerentes que dominan la intención convierten la IA en un asistente para tomar decisiones, no en un generador de informes. La diferencia está en una frase más en el prompt: "para que pueda decidir [X]".</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Decisión habilitada, análisis con intención, informe útil vs. informe completo, IA como copiloto de decisiones.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🤝</span>
+<div>
+<span class="font-medium">Intención en atención al cliente</span>
+<span class="text-neutral-500 text-sm ml-2">- Resolver, no solo responder</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">En atención al cliente, la IA puede "responder a la queja" (tarea) o "hacer que el cliente termine la interacción más satisfecho de lo que estaba al comenzar" (intención). La segunda instrucción genera empatía, sentido de urgencia, una solución concreta y seguimiento; no solo una respuesta amable.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La atención mediocre ocurre cuando la intención es «cerrar el ticket». La atención memorable ocurre cuando la intención es «transformar a un cliente frustrado en defensor de la marca». La IA ejecuta ambas con la misma competencia: tú eliges cuál.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Intención de atención, estado emocional del cliente, resolver vs. responder, defensor de marca.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🎭</span>
+<div>
+<span class="font-medium">Alinear el tono y el lenguaje con la intención</span>
+<span class="text-neutral-500 text-sm ml-2">- El tono urgente vende; el tono informativo educa</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">El tono es la envoltura de la intención. Una intención de venta requiere urgencia, claridad y el siguiente paso. Una intención de autoridad requiere profundidad y confianza. Una intención de interacción requiere provocación y apertura al diálogo. Declarar la intención incluye declarar el tono que la favorece.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">El conflicto más común: intención de venta con tono académico. El texto lo explica todo correctamente y no genera ninguna acción, porque el tono indicó "aprende" cuando la intención era "actúa ahora".</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">El tono como envoltura, alineación entre tono e intención, conflicto entre estilo y objetivo, tono declarado en el prompt.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T6 Atalho do retardatário -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">⚡</span>
+<div>
+<span class="font-medium">Atajo para rezagados</span>
+<span class="text-neutral-500 text-sm ml-2">- La frase de 1 línea que lo cambia todo</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">¿Sin tiempo para completar el Kit T2? Una frase al final de cualquier prompt transforma el resultado: «Mi objetivo real aquí es ___.» Esta frase activa toda la lógica de intención sin necesidad de reestructurar el pedido. Es lo mínimo viable de la intención: funciona en 10 segundos.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Quien llega tarde no tiene tiempo para cambiar todos sus hábitos de una vez. Un atajo que funciona ahora vale más que un sistema perfecto que empieza mañana. Esta frase es el hábito mínimo de la capa 2.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Mínimo viable de intención, frase ancla, hábito de entrada, «el objetivo real aquí es».</p>
+</div>
+</div>
+</div>
+</div>
+<!-- T7 Na sua profissão -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">💼</span>
+<div>
+<span class="font-medium">En tu profesión</span>
+<span class="text-neutral-500 text-sm ml-2">- Profesor · Abogado · Vendedor · Gerente · Creador</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">La intención traducida a 5 realidades profesionales: docente (¿qué debe lograr el alumno con la clase?), abogado (¿qué decisión del cliente respalda el dictamen?), vendedor (¿cuál es el próximo paso concreto del cliente potencial después de leer esto?), gerente (¿qué decisión permite tomar este análisis?), creador (¿qué hace el público después de ver o leer?).</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Los principios abstractos no cambian los hábitos; los ejemplos de tu entorno sí. Este tema es donde te ves en el espejo y entiendes exactamente cuál es tu intención habitual y dónde suele fallar.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Intención según profesión, profesor/abogado/vendedor/gestor/creador, aplicación inmediata, verse en el ejemplo.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-2-2')">
+          Ver en Modal
+        </button>
+<a class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors" href="modulo-2-2.html">
+          Ver completo
+        </a>
+</div>
+</div>
+<!-- NAVEGACAO -->
+<div class="flex flex-col sm:flex-row gap-4 mt-12">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="../../index.html">
+        ← Volver al inicio
+      </a>
+<a class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors" href="../trilha3/index.html">
+        Próxima Ruta: Contexto →
+      </a>
+</div>
+</main>
+<!-- MODAIS -->
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-2-1" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-blue-400 font-bold">2.1</span>
+<span class="font-semibold">Tarea × Intención</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-2-1.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-2-2" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-blue-400 font-bold">2.2</span>
+<span class="font-semibold">Intención aplicada a resultados</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-2-2.html"></iframe>
+</div>
+</div>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>Ingeniería de Conocimiento de la IA — Pirámide de la Inteligencia Aplicada · 2026</p>
+<p class="mt-2">Un curso <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

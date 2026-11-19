@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Module 3.2 — Context Engineering in Practice | Track 3</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124, 58, 237, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124, 58, 237, 0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124, 58, 237, 0.18); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124, 58, 237, 0.06); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    @keyframes m32-pulse { 0%,100% { opacity:.6 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .m32-step { animation: m32-pulse 3s ease-in-out infinite; }
+      .m32-step:nth-child(2){animation-delay:.4s}
+      .m32-step:nth-child(3){animation-delay:.8s}
+      .m32-step:nth-child(4){animation-delay:1.2s}
+      .m32-step:nth-child(5){animation-delay:1.6s}
+    }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha3/modulo-3-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha3/modulo-3-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha3/modulo-3-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-3-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha3/modulo-3-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">AI Pyramid</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intent</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Context</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Effective use</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Architecture</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolution</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+<nav class="text-sm text-neutral-500">
+<a class="hover:text-neutral-300 transition-colors" href="../../index.html">Start</a>
+<span class="mx-2">/</span>
+<a class="hover:text-neutral-300 transition-colors" href="index.html">Track 3</a>
+<span class="mx-2">/</span>
+<span class="text-neutral-300">Module 3.2</span>
+</nav>
+</div>
+<!-- HEADER DO MÓDULO -->
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-10 border-b border-dark-600 mt-4">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center space-x-3 mb-4">
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full">MODULE 3.2</span>
+<span class="text-neutral-500 text-sm">~55 min</span>
+</div>
+<h1 class="text-3xl sm:text-4xl font-bold mb-3">🛠️ Context engineering in practice</h1>
+<p class="text-neutral-400 max-w-3xl">From theory to a working folder: permanent briefing, folder structure, history reuse, audience dossier, guardrails, 5-line mini-brief, and profession-specific applications.</p>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+<!-- TÓPICO 1 — Briefing permanente -->
+<section id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">1</span>
+<div>
+<h2 class="text-2xl font-bold">📋 The permanent brief</h2>
+<p class="text-neutral-400 text-sm">The doc you paste or attach every time</p>
+</div>
+</div>
+<!-- SVG: escada de evolução do briefing -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-4 mb-6 overflow-hidden">
+<svg aria-label="Growth ladder: no brief → improvised brief → reusable permanent brief → consistent result" class="w-full h-auto" role="img" viewbox="0 0 900 180">
+<defs>
+<filter height="180%" id="m32-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="28" id="m32-grid" patternunits="userSpaceOnUse" width="28">
+<circle cx="1" cy="1" fill="#a855f7" opacity="0.1" r="1.1"></circle>
+</pattern>
+<marker id="m32-ah" markerheight="8" markerwidth="8" orient="auto" refx="5.5" refy="4">
+<path d="M0,0 L7,4 L0,8 L2,4 Z" fill="#c084fc"></path>
+</marker>
+</defs>
+<rect fill="url(#m32-grid)" height="180" width="900"></rect>
+<!-- Degraus -->
+<g class="m32-step">
+<rect fill="#1a1230" height="40" rx="10" stroke="#6b7280" stroke-width="1.8" width="160" x="30" y="120"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="110" y="145">No brief</text>
+<text fill="#6b7280" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="110" y="162">generic result</text>
+</g>
+<path d="M190,130 L250,110" fill="none" marker-end="url(#m32-ah)" opacity="0.5" stroke="#c084fc" stroke-width="1.5"></path>
+<g class="m32-step">
+<rect fill="#1a1230" height="40" rx="10" stroke="#38bdf8" stroke-width="1.8" width="160" x="250" y="90"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="330" y="115">Improvised brief</text>
+<text fill="#6b7280" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="330" y="132">rewrites every time</text>
+</g>
+<path d="M410,100 L470,75" fill="none" marker-end="url(#m32-ah)" opacity="0.5" stroke="#c084fc" stroke-width="1.5"></path>
+<g class="m32-step">
+<rect fill="#1a1230" height="40" rx="10" stroke="#a855f7" stroke-width="2" width="180" x="470" y="55"></rect>
+<text fill="#ddc2ff" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="560" y="80">Standing brief</text>
+<text fill="#a855f7" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="560" y="97">paste in 30 seconds</text>
+</g>
+<path d="M650,70 L710,50" fill="none" marker-end="url(#m32-ah)" opacity="0.5" stroke="#c084fc" stroke-width="1.5"></path>
+<g class="m32-step" filter="url(#m32-glow)">
+<rect fill="#1a1230" height="50" rx="12" stroke="#c084fc" stroke-width="2.5" width="160" x="710" y="25"></rect>
+</g>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="790" y="52">Consistency</text>
+<text fill="#ddc2ff" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="790" y="68">every session, same tone ✓</text>
+</svg>
+</div>
+<!-- Briefing-base Kit T3 — copy-paste principal -->
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-purple-400 font-semibold text-sm">📦 Kit T3 — Project base brief</span>
+<span class="text-xs text-neutral-500 font-mono">copy-paste</span>
+</div>
+<pre class="text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap"># Project: [project or company name]
+
+Who we are / voice: [describe the tone in 2-3 adjectives + 1 example sentence in the right tone]
+
+Audience: [who will read/use the result — profile, level, main pain points]
+
+Good examples: [paste 1-2 text excerpts you approve as tone references]
+
+Examples to avoid: [paste 1 excerpt or describe what you don’t want]
+
+Rules/limits: [list what must never appear — competitors, promises, jargon]
+
+Expected result in this session: [what you want to generate now]
+
+⚠ Sensitive data: anonymized (checklist ok)</pre>
+</div>
+<!-- Tip box -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-6">
+<div class="flex items-start space-x-3">
+<span class="text-primary text-xl flex-shrink-0">💡</span>
+<div>
+<div class="text-primary font-semibold mb-1">Where to save the base briefing</div>
+<p class="text-sm text-neutral-400">Save it where you already go every day: Google Docs, Notion, Apple Notes, or a pinned Word doc. The deciding factor isn’t the most sophisticated app—it’s the one with zero friction to open and copy from.</p>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📋</div>
+<div class="text-xs font-semibold text-neutral-300">Standing brief</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📄</div>
+<div class="text-xs font-semibold text-neutral-300">Living doc</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">⚡</div>
+<div class="text-xs font-semibold text-neutral-300">Quick reference</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🔄</div>
+<div class="text-xs font-semibold text-neutral-300">Consistency</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 2 — Estrutura de pastas -->
+<section id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">2</span>
+<div>
+<h2 class="text-2xl font-bold">📁 Folder structure the AI understands</h2>
+<p class="text-neutral-400 text-sm">Organize for reuse, not for archiving</p>
+</div>
+</div>
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+<p class="text-neutral-300 leading-relaxed">A context folder isn’t an archive—it’s a living asset. The right structure makes modular updates possible: when the audience changes, you update only /audience. When a new example comes in, it goes in /good-examples.</p>
+</div>
+<!-- Estrutura de pastas copy-paste -->
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-purple-400 font-semibold text-sm">Recommended structure: context folder</span>
+<span class="text-xs text-neutral-500 font-mono">copy-paste</span>
+</div>
+<pre class="text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap">📁 contexto-[nome-do-projeto]/
+├── 📄 briefing.md          ← quem somos, voz, objetivo geral
+├── 📄 publico.md           ← perfil, dores, linguagem que ressoa
+├── 📄 restricoes.md        ← o que nunca pode aparecer
+├── 📁 exemplos-bons/       ← textos aprovados como referência
+│   ├── email-exemplo-1.txt
+│   └── post-exemplo-2.txt
+├── 📁 exemplos-ruins/      ← estilos a evitar
+│   └── contra-exemplo.txt
+└── 📄 checklist-privacidade.md  ← confirmação que dados são seguros</pre>
+</div>
+<!-- Grid fazer vs evitar na organização -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-5">
+<div class="text-purple-400 font-semibold mb-3">✓ Organize it like this</div>
+<ul class="space-y-2 text-sm text-neutral-400">
+<li class="flex items-start space-x-2"><span class="text-purple-400">→</span><span>One file per type of context (briefing separate from audience)</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">→</span><span>Descriptive file names without accents</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">→</span><span>Last updated date at the top of each file</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">→</span><span>Real examples, not imagined ones</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 border border-red-500/30 rounded-xl p-5">
+<div class="text-red-400 font-semibold mb-3">✗ Avoid</div>
+<ul class="space-y-2 text-sm text-neutral-400">
+<li class="flex items-start space-x-2"><span class="text-red-400">→</span><span>Everything in one giant document that’s impossible to update</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">→</span><span>Outdated files without a review date</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">→</span><span>Mixing different projects in the same folder</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">→</span><span>Save to the "Downloads" folder without any structure</span></li>
+</ul>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📁</div>
+<div class="text-xs font-semibold text-neutral-300">Context folder</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🧩</div>
+<div class="text-xs font-semibold text-neutral-300">Modular</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🔄</div>
+<div class="text-xs font-semibold text-neutral-300">Easy update</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🗂️</div>
+<div class="text-xs font-semibold text-neutral-300">By type of context</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 3 — Histórico como contexto -->
+<section id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">3</span>
+<div>
+<h2 class="text-2xl font-bold">♻️ Turn history into reusable context</h2>
+<p class="text-neutral-400 text-sm">Your past conversations are worth their weight in gold</p>
+</div>
+</div>
+<!-- Tip box -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-6">
+<div class="flex items-start space-x-3">
+<span class="text-primary text-xl flex-shrink-0">💡</span>
+<div>
+<div class="text-primary font-semibold mb-1">The context you built without realizing it</div>
+<p class="text-sm text-neutral-400">Every good conversation where you corrected the AI, approved a passage, or made a decision contains implicit context. That context disappears when the session closes — but you can save it beforehand.</p>
+</div>
+</div>
+</div>
+<!-- Timeline de extração -->
+<div class="space-y-3 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-sm">1</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200 mb-1">At the end of a good conversation, ask for a summary</div>
+<p class="text-sm text-neutral-400 font-mono bg-dark-900/50 rounded p-2 mt-1">"List the 5 main decisions we made in this conversation, the tone preferences you identified, and the examples I approved."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-sm">2</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200 mb-1">Paste the summary into your base brief</div>
+<p class="text-sm text-neutral-400">Add a section called "Accumulated Decisions" or "Confirmed Preferences." Each good conversation adds another layer of precision.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-sm">3</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200 mb-1">In the next session, start with the updated briefing</div>
+<p class="text-sm text-neutral-400">The AI "remembers" everything you pasted — even in a new conversation. It's manual memory, but it works.</p>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">♻️</div>
+<div class="text-xs font-semibold text-neutral-300">Session recycling</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📌</div>
+<div class="text-xs font-semibold text-neutral-300">Accumulated decisions</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🧠</div>
+<div class="text-xs font-semibold text-neutral-300">Manual memory</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📈</div>
+<div class="text-xs font-semibold text-neutral-300">Growing context</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 4 — Dossiê de público -->
+<section id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">4</span>
+<div>
+<h2 class="text-2xl font-bold">🎯 Target audience profile</h2>
+<p class="text-neutral-400 text-sm">1 page that improves everything</p>
+</div>
+</div>
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+<p class="text-neutral-300 leading-relaxed">AI writes for the audience you identify. Without a profile, it assumes a generic, educated adult reader. With a profile, emails, posts, and other texts automatically match the right tone, language, and depth.</p>
+</div>
+<!-- Template dossiê -->
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-purple-400 font-semibold text-sm">Template: audience profile dossier (1 page)</span>
+<span class="text-xs text-neutral-500 font-mono">copy-paste</span>
+</div>
+<pre class="text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap"># Target audience: [name/description]
+
+Profile: [age range, profession, relevant education level]
+
+Main pain points:
+- [pain point 1 — what keeps them up at night]
+- [pain point 2 — recurring frustration]
+- [pain point 3 — what they can’t do on their own]
+
+Language that resonates: [terms they use, preferred tone, examples]
+
+What puts them off: [jargon that annoys them, tone they reject, what sounds fake]
+
+Knowledge level about [topic]: [beginner / intermediate / advanced]
+
+How they find me: [channel, context, emotional state when they arrive]</pre>
+</div>
+<!-- Comparação antes/depois -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-red-900/20 border border-red-500/30 rounded-xl p-5">
+<div class="text-red-400 font-semibold mb-2">✗ Without a dossier</div>
+<p class="text-sm text-neutral-400 italic">"Dear professional, we are pleased to present our innovative solution, which will certainly bring excellent results to your business..."</p>
+<p class="text-xs text-neutral-500 mt-2">Generic corporate tone. No one feels spoken to.</p>
+</div>
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-5">
+<div class="text-purple-400 font-semibold mb-2">✓ With a dossier (audience: beginner freelancer, 25 years old)</div>
+<p class="text-sm text-neutral-400 italic">"If you’ve spent the last two weeks rewriting proposals and still haven’t heard back, this template will change that..."</p>
+<p class="text-xs text-neutral-500 mt-2">Speak directly to the real pain point.</p>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🎯</div>
+<div class="text-xs font-semibold text-neutral-300">Audience dossier</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">😣</div>
+<div class="text-xs font-semibold text-neutral-300">Main pain points</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🗣️</div>
+<div class="text-xs font-semibold text-neutral-300">Resonant language</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">⚙️</div>
+<div class="text-xs font-semibold text-neutral-300">Automatic calibration</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 5 — Restrições e guarda-corpos -->
+<section id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">5</span>
+<div>
+<h2 class="text-2xl font-bold">🚧 Internal constraints and rules as guardrails</h2>
+<p class="text-neutral-400 text-sm">What AI should never suggest</p>
+</div>
+</div>
+<!-- Tip box -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-6">
+<div class="flex items-start space-x-3">
+<span class="text-primary text-xl flex-shrink-0">💡</span>
+<div>
+<div class="text-primary font-semibold mb-1">Guardrails: context that prevents errors</div>
+<p class="text-sm text-neutral-400">Without explicit constraints, AI improvises within what it considers reasonable—which may not be what your company, client, or compliance team considers reasonable. Writing down the limits creates operational safeguards before a problem occurs.</p>
+</div>
+</div>
+</div>
+<!-- Exemplos de restrições por categoria -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold mb-3 text-sm">🏢 Business</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li>"Never mention competitors by name"</li>
+<li>"Don't mention prices without commercial approval"</li>
+<li>"Avoid specific financial projections"</li>
+<li>"Don't promise a timeline without internal validation"</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold mb-3 text-sm">⚖️ Legal/Compliance</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li>"Follow CONAR’s rules for advertising"</li>
+<li>"Don't make unsupported health claims"</li>
+<li>"Include the disclaimers required by law"</li>
+<li>"Avoid language that could be interpreted as a guarantee"</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold mb-3 text-sm">🎨 Tone/Style</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li>"Don't use slang"</li>
+<li>"Avoid humor in crisis communications"</li>
+<li>"Never use the passive voice"</li>
+<li>"Forbidden: 'synergy,' 'disruptive,' 'ecosystem'"</li>
+</ul>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🚧</div>
+<div class="text-xs font-semibold text-neutral-300">Guardrails</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">⚖️</div>
+<div class="text-xs font-semibold text-neutral-300">Compliance</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📜</div>
+<div class="text-xs font-semibold text-neutral-300">Prohibited items list</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🔐</div>
+<div class="text-xs font-semibold text-neutral-300">Operational security</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 6 — Mini-briefing de 5 linhas -->
+<section id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">6</span>
+<div>
+<h2 class="text-2xl font-bold">⚡ Latecomer shortcut: the 5-line mini-brief</h2>
+<p class="text-neutral-400 text-sm">The minimum context that already works</p>
+</div>
+</div>
+<!-- Box destaque -->
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+<p class="text-neutral-300 text-lg leading-relaxed">The full brief is ideal—but perfect is the enemy of done. The 5-line mini-brief is the <em>minimum viable context</em>: in 2 minutes, you improve the response quality without having to build the complete folder.</p>
+</div>
+<!-- As 5 linhas -->
+<div class="space-y-3 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">1</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200">Who am I / who is the company</div>
+<p class="text-sm text-neutral-400 mt-1 font-mono">E.g.: "I'm a digital marketing consultant serving small and midsize retail businesses."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">2</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200">Who this result is for</div>
+<p class="text-sm text-neutral-400 mt-1 font-mono">E.g.: "For my client, a clothing store owner, 45 years old, nontechnical."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">3</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200">Objective of this specific outcome</div>
+<p class="text-sm text-neutral-400 mt-1 font-mono">E.g.: "Generate 3 caption options for the store's Instagram for Mother's Day."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">4</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200">Desired tone</div>
+<p class="text-sm text-neutral-400 mt-1 font-mono">E.g.: "Warm tone, no slang, for women ages 35-55."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold">5</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="font-semibold text-neutral-200">A critical constraint</div>
+<p class="text-sm text-neutral-400 mt-1 font-mono">E.g.: "Don't mention a price promotion — we don't have a discount this time."</p>
+</div>
+</div>
+</div>
+<!-- Copy-paste mini-briefing -->
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-purple-400 font-semibold text-sm">⚡ Template: 5-line mini-brief</span>
+<span class="text-xs text-neutral-500 font-mono">copy-paste</span>
+</div>
+<pre class="text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap">Quick context:
+1. Who I am: [your role / company in 1 line]
+2. For whom: [profile of the reader/user of the result]
+3. Goal right now: [what you want to generate in this session]
+4. Tone: [3 adjectives or 1 sentence describing the tone]
+5. Critical constraint: [what must not appear]
+
+[Put the actual request here]</pre>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">⚡</div>
+<div class="text-xs font-semibold text-neutral-300">Mini-brief</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">5️⃣</div>
+<div class="text-xs font-semibold text-neutral-300">5 lines of context</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🎯</div>
+<div class="text-xs font-semibold text-neutral-300">Context MVP</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🚀</div>
+<div class="text-xs font-semibold text-neutral-300">Low friction</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 7 — Na sua profissão -->
+<section id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl flex-shrink-0">7</span>
+<div>
+<h2 class="text-2xl font-bold">👤 In your profession</h2>
+<p class="text-neutral-400 text-sm">5 profiles: teacher, lawyer, salesperson, manager, creator</p>
+</div>
+</div>
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6 mb-6">
+<p class="text-neutral-300 leading-relaxed">The principle is universal—the context is specific. Every profession has its standard set of context. Below, what to put in the folder depending on your work.</p>
+</div>
+<!-- Grid 5 profissões -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">👨‍🏫</div>
+<div class="text-purple-400 font-bold mb-2">Teacher</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li><span class="text-purple-400">📌</span> Class profile (age range, level)</li>
+<li><span class="text-purple-400">📌</span> Course curriculum/syllabus</li>
+<li><span class="text-purple-400">📌</span> Examples of lessons that worked</li>
+<li><span class="text-purple-400">📌</span> Recurring student difficulties</li>
+<li><span class="text-purple-400">📌</span> Constraints in the current lesson plan</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">⚖️</div>
+<div class="text-purple-400 font-bold mb-2">Lawyer</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li><span class="text-purple-400">📌</span> Sample submissions from the review panel (anonymized)</li>
+<li><span class="text-purple-400">📌</span> The court’s usual case law</li>
+<li><span class="text-purple-400">📌</span> Client profile (business/individual, sector)</li>
+<li><span class="text-purple-400">📌</span> Committee tone (formal, objective)</li>
+<li><span class="text-purple-400">📌</span> Legislation applicable to the case</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">💼</div>
+<div class="text-purple-400 font-bold mb-2">Seller</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li><span class="text-purple-400">📌</span> ICP (ideal customer profile)</li>
+<li><span class="text-purple-400">📌</span> Most common objections</li>
+<li><span class="text-purple-400">📌</span> Unique value proposition</li>
+<li><span class="text-purple-400">📌</span> Sales cycle and stage</li>
+<li><span class="text-purple-400">📌</span> Anonymized success stories</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">📊</div>
+<div class="text-purple-400 font-bold mb-2">Manager</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li><span class="text-purple-400">📌</span> Quarterly/semiannual goals</li>
+<li><span class="text-purple-400">📌</span> Current budget constraints</li>
+<li><span class="text-purple-400">📌</span> Team profile (seniority, gaps)</li>
+<li><span class="text-purple-400">📌</span> Decisions already made (don't reopen)</li>
+<li><span class="text-purple-400">📌</span> Stakeholders and their interests</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">🎥</div>
+<div class="text-purple-400 font-bold mb-2">Content Creator</div>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li><span class="text-purple-400">📌</span> Niche and positioning</li>
+<li><span class="text-purple-400">📌</span> 3 posts that performed best</li>
+<li><span class="text-purple-400">📌</span> Audience profile (channel, age)</li>
+<li><span class="text-purple-400">📌</span> Voice: informal, inspirational, technical?</li>
+<li><span class="text-purple-400">📌</span> What the audience hates (real criticism)</li>
+</ul>
+</div>
+</div>
+<!-- Tip box -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-6">
+<div class="flex items-start space-x-3">
+<span class="text-primary text-xl flex-shrink-0">💡</span>
+<div>
+<div class="text-primary font-semibold mb-1">You don’t fit into any of these categories?</div>
+<p class="text-sm text-neutral-400">Use this framework: (1) What information about my work would the AI need to get the tone right? (2) What examples of good results do I have saved? (3) What must never appear in my work context? These 3 questions work for any profession.</p>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">👤</div>
+<div class="text-xs font-semibold text-neutral-300">Professional context</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🎯</div>
+<div class="text-xs font-semibold text-neutral-300">Specificity</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">📁</div>
+<div class="text-xs font-semibold text-neutral-300">Professional folder</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-dark-600 text-center">
+<div class="text-purple-400 text-lg mb-1">🔧</div>
+<div class="text-xs font-semibold text-neutral-300">Immediate application</div>
+</div>
+</div>
+</section>
+<!-- RESUMO FINAL -->
+<section class="bg-dark-800 rounded-2xl border border-purple-500/30 p-8" id="resumo">
+<h2 class="text-2xl font-bold mb-6 flex items-center space-x-3">
+<span class="text-purple-400">📋</span>
+<span>Module 3.2 Summary</span>
+</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+<div>
+<h3 class="text-purple-400 font-semibold mb-3">What you learned</h3>
+<ul class="space-y-2 text-sm text-neutral-400">
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Standing brief and Kit T3 ready to use</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Folder structure AI understands</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>How to reuse conversation history</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>One-page target audience dossier</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Constraints as operational guardrails</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>5-line mini-brief (shortcut)</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">✓</span><span>Profession-specific context</span></li>
+</ul>
+</div>
+<div>
+<h3 class="text-purple-400 font-semibold mb-3">What comes next</h3>
+<div class="bg-dark-700 rounded-xl p-4 text-sm text-neutral-400 space-y-2">
+<p><span class="text-neutral-300 font-medium">T4 Leverage</span> — you have prompts and context. Now comes the layer that helps these assets scale: reusable patterns, playbooks, and a living library of operational intelligence.</p>
+<p class="text-xs text-neutral-500 mt-2">The context folder you build here is the main input for T4. Context without use is raw material; with use, it becomes a system.</p>
+</div>
+</div>
+</div>
+<!-- Entregável -->
+<div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-5 mb-6">
+<div class="flex items-start space-x-3">
+<span class="text-2xl">📦</span>
+<div>
+<div class="text-purple-400 font-semibold text-lg mb-1">Deliverable for this track</div>
+<p class="text-neutral-300 font-semibold">Project brief ready to attach again</p>
+<p class="text-sm text-neutral-400 mt-1">Use the T3 Kit (base briefing) for a real project. Create the folder structure. Fill out the audience dossier. Put together the mini-briefing to use when you’re in a hurry. This set is your operational context—it grows with every session.</p>
+</div>
+</div>
+</div>
+<!-- Navegação -->
+<div class="flex gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 hover:bg-dark-600 rounded-lg font-semibold transition-colors" href="modulo-3-1.html">
+          ← Module 3.1
+        </a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-semibold transition-colors" href="../trilha4/index.html">
+          Next Track: Leverage →
+        </a>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>AI Knowledge Engineering — Applied Intelligence Pyramid · 2026</p>
+<p class="mt-2">A course <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+    function updateThemeIcon() {
+      if (document.documentElement.classList.contains('dark')) {
+        darkIcon.classList.add('hidden');
+        lightIcon.classList.remove('hidden');
+      } else {
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+      }
+    }
+    updateThemeIcon();
+
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      updateThemeIcon();
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+      document.documentElement.classList.remove('dark');
+      updateThemeIcon();
+    }
+  </script>
+</body>
+</html>

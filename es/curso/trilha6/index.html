@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ruta 6 — Ingeniería de Evolución | Pirámide de la IA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.4s} .wf-a:nth-child(3){animation-delay:.8s}
+      .wf-a:nth-child(4){animation-delay:1.2s}
+      .cycle-spin { animation: spin-slow 12s linear infinite; transform-origin: 500px 120px; }
+    }
+
+    /* Light mode overrides - OBRIGATORIO */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Light mode - cores de acento (trilha rose) */
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225, 29, 72, 0.18); }
+    html:not(.dark) .bg-rose-900\/20 { background-color: rgba(225, 29, 72, 0.06); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+    html:not(.dark) .hover\:border-rose-500\/30:hover { border-color: rgba(225, 29, 72, 0.25); }
+
+    /* Light mode - hovers das demais trilhas (nav) */
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+
+    /* Light mode - boxes auxiliares */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - SVG futurista contido */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha6/" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha6/" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha6/" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha6/" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha6/" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="./" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">Pirámide de la IA</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intención</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Contexto</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Aprovechamiento</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Arquitectura</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10" href="index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolución</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">
+        RUTA 6 · CIMA DE LA PIRÁMIDE
+      </span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🔄 Ingeniería de la Evolución</h1>
+<p class="text-lg text-neutral-400 max-w-3xl mb-2">
+<strong class="text-rose-400">"La evolución es el aprendizaje acumulado."</strong> ¿Cómo mejora el sistema con el tiempo? La diferencia entre quienes operan IA y quienes acumulan IA está en esta capa: cerrar el loop, convertir el resultado en una regla y construir una ventaja acumulativa.
+      </p>
+<p class="text-neutral-400 max-w-3xl">
+<strong class="text-neutral-300">El caso de esta ruta — el video que se hizo viral (y el canal que no aprendió nada):</strong> un video tuvo 50× el rendimiento promedio. El creador lo celebró y el canal siguió igual. Seis meses después, nadie sabe cómo replicarlo. Un sistema en funcionamiento no es un sistema que evoluciona: faltó el ciclo que convierte el resultado en aprendizaje.
+      </p>
+<!-- Stats Grid -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-rose-400">2</div>
+<div class="text-xs text-neutral-400">Módulos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-rose-400">14</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-rose-400">~1h40</div>
+<div class="text-xs text-neutral-400">Duración</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-rose-400">Avanzado</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- HERO SVG — ciclo fechado de evolução -->
+<div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-12 overflow-hidden">
+<svg aria-label="Ciclo cerrado de evolución: el Resultado alimenta el Análisis, que genera Aprendizaje, que se incorpora al Próximo Ciclo; una flecha cian cierra el ciclo y vuelve al inicio" class="w-full h-auto" role="img" viewbox="0 0 1000 240">
+<defs>
+<lineargradient id="t6h-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fb7185"></stop><stop offset="1" stop-color="#f43f5e"></stop>
+</lineargradient>
+<filter height="180%" id="t6h-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="2"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="t6h-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#f43f5e" opacity="0.10" r="1.3"></circle>
+</pattern>
+<marker id="t6h-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fb7185"></path></marker>
+<marker id="t6h-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#t6h-grid)" height="240" width="1000" x="0" y="0"></rect>
+<!-- Nó 1: Resultado -->
+<g filter="url(#t6h-glow)"><rect fill="#2a0f16" height="64" rx="14" stroke="url(#t6h-grad)" stroke-width="2.5" width="160" x="40" y="88"></rect></g>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="16" font-weight="700" text-anchor="middle" x="120" y="114">Resultado</text>
+<text fill="#fecdd3" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="120" y="134">50× el promedio</text>
+<!-- Seta 1→2 -->
+<path d="M200,120 L298,120" fill="none" marker-end="url(#t6h-ah)" opacity="0.7" stroke="#fb7185" stroke-width="2"></path>
+<!-- Nó 2: Análise -->
+<g filter="url(#t6h-glow)"><rect fill="#2a0f16" height="64" rx="14" stroke="url(#t6h-grad)" stroke-width="2" width="160" x="298" y="88"></rect></g>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="16" font-weight="700" text-anchor="middle" x="378" y="114">Análisis</text>
+<text fill="#fecdd3" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="378" y="134">8 preguntas</text>
+<!-- Seta 2→3 -->
+<path d="M458,120 L558,120" fill="none" marker-end="url(#t6h-ah)" opacity="0.7" stroke="#fb7185" stroke-width="2"></path>
+<!-- Nó 3: Aprendizado -->
+<g filter="url(#t6h-glow)"><rect fill="#2a0f16" height="64" rx="14" stroke="url(#t6h-grad)" stroke-width="2" width="160" x="558" y="88"></rect></g>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="16" font-weight="700" text-anchor="middle" x="638" y="114">Aprendizaje</text>
+<text fill="#fecdd3" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="638" y="134">se convierte en regla</text>
+<!-- Seta 3→4 -->
+<path d="M718,120 L800,120" fill="none" marker-end="url(#t6h-ah)" opacity="0.7" stroke="#fb7185" stroke-width="2"></path>
+<!-- Nó 4: Próximo Ciclo -->
+<rect fill="#2a0f16" height="64" rx="14" stroke="#fb7185" stroke-width="2" width="160" x="800" y="88"></rect>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="15" font-weight="700" text-anchor="middle" x="880" y="114">Siguiente</text>
+<text fill="#fecdd3" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="880" y="134">ciclo mejorado</text>
+<!-- Seta ciano fecha o loop: 4 → 1 (por baixo) -->
+<path d="M880,152 C880,200 120,200 120,152" fill="none" marker-end="url(#t6h-ahc)" opacity="0.8" stroke="#38bdf8" stroke-dasharray="6,4" stroke-width="2"></path>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="12" opacity="0.9" text-anchor="middle" x="500" y="218">bucle de evolución continua</text>
+</svg>
+</div>
+<!-- MAPA DA TRILHA -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold mb-6">Mapa de la ruta</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-rose-500/30 p-5 transition-all" href="#modulo-6-1">
+<div class="flex items-center justify-between mb-2">
+<span class="text-rose-400 font-bold text-sm">6.1</span>
+<span class="text-xs text-neutral-500">~50 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-rose-400 transition-colors">🔁 El ciclo que aprende</h3>
+<p class="text-xs text-neutral-400">Celebrar no basta: hay que descubrir por qué</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-rose-500/30 p-5 transition-all" href="#modulo-6-2">
+<div class="flex items-center justify-between mb-2">
+<span class="text-rose-400 font-bold text-sm">6.2</span>
+<span class="text-xs text-neutral-500">~50 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-rose-400 transition-colors">🏆 Inteligencia operativa acumulada</h3>
+<p class="text-xs text-neutral-400">Las 6 capas unidas — proyecto final para el portafolio</p>
+</a>
+</div>
+</section>
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- MODULO 6.1 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-6-1">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-rose-400 font-bold">6.1</span>
+<span class="text-xs text-neutral-500">~50 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">🔁 El ciclo que aprende</h3>
+<p class="text-neutral-400 text-sm">Llegaste hasta aquí porque aprendiste a armar el sistema. Ahora viene la capa que separa a quienes crecen de quienes se estancan: cerrar el ciclo. Cada resultado es una lección — si sabes extraer el porqué.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🎉</span>
+<div>
+<span class="font-medium">Celebrar no basta: hay que descubrir por qué</span>
+<span class="text-neutral-500 text-sm ml-2">- El error del canal que no aprendió nada</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">La diferencia entre celebrar un resultado y aprender de él. Un video obtuvo 50× el promedio; el creador lo celebró, el canal siguió igual y, seis meses después, nadie sabe cómo repetirlo. Un éxito del que no se aprende es suerte desperdiciada.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Los resultados excepcionales son datos. Quien no los analiza en detalle pierde la información más valiosa que el sistema puede ofrecer. La celebración es necesaria, pero debe durar 5 minutos. El análisis, 30.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Extracción de aprendizaje, resultado como dato, ciclo incompleto, análisis posterior a la entrega.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">❓</span>
+<div>
+<span class="font-medium">Las 8 preguntas posteriores al resultado</span>
+<span class="text-neutral-500 text-sm ml-2">- El protocolo que cierra el ciclo</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Un protocolo de 8 preguntas para hacer después de cualquier resultado relevante (positivo o negativo): Tema, Título, Imagen, Promesa, Estructura, Comentarios, ¿Repetir?, ¿Ajustar?</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Sin una lista de verificación fija, el análisis posterior al resultado es selectivo: recuerdas lo que ya sabías e ignoras lo nuevo. Las 8 preguntas te obligan a prestar atención a los ángulos que olvidarías.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Protocolo posterior al resultado, checklist de análisis, variables de éxito, estandarización de la extracción.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">⛽</span>
+<div>
+<span class="font-medium">Feedback como combustible</span>
+<span class="text-neutral-500 text-sm ml-2">- Cliente, datos, error: 3 fuentes que alimentan el ciclo</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Las 3 fuentes de feedback más valiosas para quien opera un sistema de conocimiento: el cliente (reacción, solicitud, queja), los datos (métricas, interacción, tasa de uso) y el error (qué falló y por qué).</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La mayoría de las personas solo procesa comentarios positivos e ignora los otros dos, que son los más informativos. El error es la señal más honesta que envía el sistema.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Feedback del cliente, métricas de uso, análisis de errores, fuentes de señales, entrada del ciclo.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🔗</span>
+<div>
+<span class="font-medium">Cerrar el ciclo</span>
+<span class="text-neutral-500 text-sm ml-2">- El aprendizaje se convierte en input del próximo ciclo</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">El acto deliberado de transformar lo que aprendiste en algo que cambie el próximo ciclo: actualizar un prompt, revisar un briefing, agregar una regla al playbook. Sin eso, el aprendizaje queda en la memoria y desaparece.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La diferencia entre un sistema que evoluciona y uno que solo funciona está en este paso. El ciclo solo se cierra cuando el aprendizaje se convierte en un artefacto, no en una intención.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Cierre del ciclo, aprendizaje como artefacto, actualización del sistema, ciclo cerrado vs. abierto.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">✏️</span>
+<div>
+<span class="font-medium">Mejora continua de prompts/briefings/playbooks</span>
+<span class="text-neutral-500 text-sm ml-2">- La versión 2.0, 3.0, 4.0 de tu arsenal</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">El proceso de versionado y mejora de tus artefactos principales: prompts que se vuelven más precisos con cada uso, briefings que acumulan contexto, playbooks que incorporan lo que funcionó y descartan lo que no.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Quien usa el mismo prompt del año pasado se está quedando atrás. El prompt v4.0, que incorporó 12 ciclos de retroalimentación, es incomparablemente más eficiente que el v1.0 original.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Versionado de artefactos, prompt v2.0, refinamiento iterativo, acumulación de calidad.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">📂</span>
+<div>
+<span class="font-medium">El historial de decisiones como activo</span>
+<span class="text-neutral-500 text-sm ml-2">- Por qué decidiste lo que decidiste</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">El registro de las decisiones que dieron forma a tu sistema: por qué elegiste ese formato de briefing, por qué abandonaste aquella plantilla, qué te hizo cambiar el enfoque. El historial es el manual del sistema que nadie más tiene.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Sin registro, repites los mismos errores (la memoria falla). Con registro, cada error ocurre una sola vez y el razonamiento detrás de las buenas decisiones queda disponible para situaciones similares.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Registro de decisiones, razonamiento documentado, memoria del sistema, activo intangible.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">📡</span>
+<div>
+<span class="font-medium">Señales de que el sistema evoluciona de verdad</span>
+<span class="text-neutral-500 text-sm ml-2">- vs. solo funciona</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Los indicadores concretos de que tu sistema está evolucionando: prompts con versión superior a 1.0, playbooks actualizados en los últimos 30 días, al menos 1 error documentado e incorporado, tiempo promedio de las tareas en descenso a lo largo de los ciclos.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Es fácil convencerse de que estás avanzando cuando solo estás ejecutando. Los indicadores objetivos eliminan la ilusión y muestran dónde está abierto el loop.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Indicadores de evolución, sistema vivo vs. sistema estático, auditoría del ciclo, señales de estancamiento.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Botoes -->
+<div class="p-6 border-t border-dark-600">
+<div class="flex flex-wrap justify-start gap-3">
+<button class="px-4 py-2 bg-rose-500/20 text-rose-400 rounded-lg text-sm font-medium hover:bg-rose-500/30 transition-colors" onclick="openModal('modal-6-1')">
+            Ver en Modal
+          </button>
+<a class="px-4 py-2 bg-rose-600 text-white rounded-lg text-sm font-medium hover:bg-rose-500 transition-colors" href="modulo-6-1.html">
+            Ver completo →
+          </a>
+</div>
+</div>
+</div>
+<!-- MODULO 6.2 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-6-2">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-rose-400 font-bold">6.2</span>
+<span class="text-xs text-neutral-500">~50 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">🏆 Inteligencia operativa acumulada <span class="text-rose-400 text-sm font-semibold ml-2">CAPSTONE</span></h3>
+<p class="text-neutral-400 text-sm">Las 6 capas unidas: Prompt → Intención → Contexto → Aprovechamiento → Arquitectura → Evolución. Aquí cierras la pirámide, construyes la pieza para el portafolio y aprendes a presentarla — en LinkedIn, en tu currículum, en una entrevista.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🔗</span>
+<div>
+<span class="font-medium">Juntarlo todo: las 6 capas en acción</span>
+<span class="text-neutral-500 text-sm ml-2">- Cómo cada ruta alimenta la siguiente</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">La visión integrada de las 6 capas: cómo un buen prompt depende de una intención clara, que depende de un contexto rico, que se aprovecha en un método, que escala en una arquitectura y que mejora con la evolución. La pirámide completa en acción.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Quien ve las 6 capas por separado tiene 6 herramientas. Quien ve cómo se conectan tiene un sistema. La diferencia en los resultados es exponencial.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Sistema integrado, 6 capas, pirámide completa, visión sistémica, interdependencia de las rutas.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">📅</span>
+<div>
+<span class="font-medium">Ritmo de revisión sin burocracia</span>
+<span class="text-neutral-500 text-sm ml-2">- Revisión semanal de 10 min, mensual de 30 min</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Un protocolo sencillo de revisión del sistema: revisión semanal de 10 minutos (qué funcionó esta semana, qué ajustar) y revisión mensual de 30 minutos (actualizar artefactos, versionar prompts, revisar los indicadores).</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Los rituales pesados no perduran. Los rituales ligeros que encajan en la rutina existente se mantienen durante años. El secreto es reducir la fricción al mínimo sin renunciar a la cadencia.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Revisión periódica, ritmo ligero, cadencia de evolución, poca fricción, hábito sostenible.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">📊</span>
+<div>
+<span class="font-medium">Métricas que importan para TU objetivo</span>
+<span class="text-neutral-500 text-sm ml-2">- No existe una métrica universal</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Definir las 2-3 métricas que realmente indican que TU sistema está evolucionando, no las métricas genéricas que aparecen en todas las publicaciones sobre productividad. Para un creador es diferente que para un gerente, y también es diferente para un trabajador independiente.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Medir lo que no importa crea una ilusión de progreso. Medir lo que importa genera responsabilidad real. Tu métrica de evolución debe ser aquello que revisarías en 6 meses para saber si valió la pena.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Métricas personales, indicadores de progreso, objetivo del sistema, enfoque en 2-3 KPIs.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🔧</span>
+<div>
+<span class="font-medium">Cuándo reescribir y cuándo ajustar</span>
+<span class="text-neutral-500 text-sm ml-2">- El diagnóstico de fin de vida de un artefacto</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Las señales que indican si un prompt, briefing o playbook necesita un ajuste incremental o una reescritura completa: número de parches acumulados, cambio de objetivo, resultado consistentemente por debajo de lo esperado.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Seguir ajustando un artefacto que debe reescribirse hace perder tiempo y empeora el sistema. Reconocer el momento adecuado para reiniciar es una habilidad de operación avanzada.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Fin de vida de un artefacto, reescritura vs. patch, diagnóstico del sistema, refactoring del conocimiento.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">📈</span>
+<div>
+<span class="font-medium">Ventaja compuesta</span>
+<span class="text-neutral-500 text-sm ml-2">- Por qué quien va rezagado adelanta en 6 meses</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Las matemáticas de la ventaja compuesta aplicadas al sistema de conocimiento: quien empieza 6 meses después, pero aplica los ciclos de evolución, supera a quien empezó antes y se quedó coleccionando prompts sueltos. Cada ciclo completado multiplica el anterior.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La tesis del que llega tarde y aprende bien: empezar tarde con un sistema &gt; empezar temprano sin un sistema. La ventaja compuesta no es una metáfora: es el mecanismo real por el que los sistemas bien operados superan a las herramientas bien coleccionadas.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Ventaja compuesta, ciclos multiplicativos, rezagado estratégico, calidad &gt; cantidad.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🗺️</span>
+<div>
+<span class="font-medium">Capstone como portafolio</span>
+<span class="text-neutral-500 text-sm ml-2">- Mapa del sistema + LinkedIn + currículum + entrevista</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Cómo armar el «Mapa de tu Sistema de Conocimiento de IA» en 1 página y cómo presentarlo: una publicación de LinkedIn adaptable, una descripción para tu currículum y una frase para una entrevista («yo no uso IA, opero un sistema de IA»).</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Lo que no es visible no existe en el mercado. Convertir el sistema que construiste en una pieza de portafolio comunica competencia de una forma que una lista de herramientas nunca podrá igualar.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Portafolio de sistemas, mapa de conocimiento, comunicación de competencias, diferenciación en el mercado.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">⚡</span>
+<div>
+<span class="font-medium">Atajo para rezagados</span>
+<span class="text-neutral-500 text-sm ml-2">- La única pregunta que acelera todo</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">La única pregunta que activa el ciclo de evolución sin formalidades: <em>"¿Qué repito que podría mejorar?"</em> Aplicada a cualquier tarea recurrente, identifica el siguiente punto de mejora más valioso del sistema.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La mayoría de las mejoras de un sistema provienen de tareas repetidas, no de proyectos únicos. Quien observa las repeticiones con una mirada puesta en mejorar acumula beneficios allí donde otros ni siquiera ven que hay algo que ganar.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Pregunta de evolución, tareas recurrentes, mejora incremental, atajo del rezagado.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Botoes -->
+<div class="p-6 border-t border-dark-600">
+<div class="flex flex-wrap justify-start gap-3">
+<button class="px-4 py-2 bg-rose-500/20 text-rose-400 rounded-lg text-sm font-medium hover:bg-rose-500/30 transition-colors" onclick="openModal('modal-6-2')">
+            Ver en Modal
+          </button>
+<a class="px-4 py-2 bg-rose-600 text-white rounded-lg text-sm font-medium hover:bg-rose-500 transition-colors" href="modulo-6-2.html">
+            Ver completo →
+          </a>
+</div>
+</div>
+</div>
+<!-- NAVEGACAO RODAPE -->
+<div class="flex flex-col sm:flex-row gap-4 mt-12">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="../../index.html">
+        ← Volver al inicio
+      </a>
+<a class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors" href="../prova/index.html">
+        Haz la Prueba de la Pirámide →
+      </a>
+</div>
+</main>
+<!-- MODAIS -->
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-6-1" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-rose-400 font-bold">6.1</span>
+<span class="font-semibold">El ciclo que aprende</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-6-1.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-6-2" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-rose-400 font-bold">6.2</span>
+<span class="font-semibold">Inteligencia operativa acumulada (CAPSTONE)</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-6-2.html"></iframe>
+</div>
+</div>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>Ingeniería de Conocimiento de la IA — Pirámide de la Inteligencia Aplicada · 2026</p>
+<p class="mt-2">Un curso <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+    }
+
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+    function updateIcons() {
+      if (document.documentElement.classList.contains('dark')) {
+        darkIcon.classList.add('hidden'); lightIcon.classList.remove('hidden');
+      } else {
+        lightIcon.classList.add('hidden'); darkIcon.classList.remove('hidden');
+      }
+    }
+    updateIcons();
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      updateIcons();
+    });
+  </script>
+</body>
+</html>

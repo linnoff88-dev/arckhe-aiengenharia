@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Track 6 — Evolution Engineering | The AI Pyramid</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.4s} .wf-a:nth-child(3){animation-delay:.8s}
+      .wf-a:nth-child(4){animation-delay:1.2s}
+      .cycle-spin { animation: spin-slow 12s linear infinite; transform-origin: 500px 120px; }
+    }
+
+    /* Light mode overrides - OBRIGATORIO */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Light mode - cores de acento (trilha rose) */
+    html:not(.dark) .text-rose-400 { color: #9f1239; }
+    html:not(.dark) .bg-rose-500\/20 { background-color: rgba(225, 29, 72, 0.12); }
+    html:not(.dark) .bg-rose-500\/10 { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .border-rose-500\/30 { border-color: rgba(225, 29, 72, 0.25); }
+    html:not(.dark) .hover\:bg-rose-500\/30:hover { background-color: rgba(225, 29, 72, 0.18); }
+    html:not(.dark) .bg-rose-900\/20 { background-color: rgba(225, 29, 72, 0.06); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-rose-400 { color: #9f1239; }
+    html:not(.dark) .hover\:border-rose-500\/30:hover { border-color: rgba(225, 29, 72, 0.25); }
+
+    /* Light mode - hovers das demais trilhas (nav) */
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+
+    /* Light mode - boxes auxiliares */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - SVG futurista contido */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha6/" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha6/" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha6/" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha6/" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="./" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha6/" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">AI Pyramid</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intent</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Context</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Effective use</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Architecture</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-rose-400 bg-rose-500/10" href="index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolution</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-rose-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-rose-500/20 text-rose-400 text-xs font-semibold rounded-full mb-4">
+        TRACK 6 · PYRAMID PEAK
+      </span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🔄 Evolution Engineering</h1>
+<p class="text-lg text-neutral-400 max-w-3xl mb-2">
+<strong class="text-rose-400">"Evolution is accumulated learning."</strong> How does the system improve over time? The difference between people who operate AI and those who accumulate AI lies in this layer: closing the loop, turning results into rules, building a compounding advantage.
+      </p>
+<p class="text-neutral-400 max-w-3xl">
+<strong class="text-neutral-300">The case in this learning path—the video that blew up (and the channel that learned nothing):</strong> a video performed 50× better than average. The creator celebrated, and the channel carried on as usual. Six months later, no one knows how to replicate it. A running system isn’t an evolving system: the cycle that turns results into learning was missing.
+      </p>
+<!-- Stats Grid -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-rose-400">2</div>
+<div class="text-xs text-neutral-400">Modules</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-rose-400">14</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-rose-400">~1h40</div>
+<div class="text-xs text-neutral-400">Duration</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-rose-400">Advanced</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- HERO SVG — ciclo fechado de evolução -->
+<div class="rounded-2xl border border-rose-500/30 bg-dark-900/40 p-3 sm:p-4 mb-12 overflow-hidden">
+<svg aria-label="Closed evolution loop: Results feed Analysis, which generates Learning, which goes into the Next Cycle—the cyan arrow closes the loop back to the start" class="w-full h-auto" role="img" viewbox="0 0 1000 240">
+<defs>
+<lineargradient id="t6h-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fb7185"></stop><stop offset="1" stop-color="#f43f5e"></stop>
+</lineargradient>
+<filter height="180%" id="t6h-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="2"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="t6h-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#f43f5e" opacity="0.10" r="1.3"></circle>
+</pattern>
+<marker id="t6h-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fb7185"></path></marker>
+<marker id="t6h-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#t6h-grid)" height="240" width="1000" x="0" y="0"></rect>
+<!-- Nó 1: Resultado -->
+<g filter="url(#t6h-glow)"><rect fill="#2a0f16" height="64" rx="14" stroke="url(#t6h-grad)" stroke-width="2.5" width="160" x="40" y="88"></rect></g>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="16" font-weight="700" text-anchor="middle" x="120" y="114">Result</text>
+<text fill="#fecdd3" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="120" y="134">50× the average</text>
+<!-- Seta 1→2 -->
+<path d="M200,120 L298,120" fill="none" marker-end="url(#t6h-ah)" opacity="0.7" stroke="#fb7185" stroke-width="2"></path>
+<!-- Nó 2: Análise -->
+<g filter="url(#t6h-glow)"><rect fill="#2a0f16" height="64" rx="14" stroke="url(#t6h-grad)" stroke-width="2" width="160" x="298" y="88"></rect></g>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="16" font-weight="700" text-anchor="middle" x="378" y="114">Analysis</text>
+<text fill="#fecdd3" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="378" y="134">8 questions</text>
+<!-- Seta 2→3 -->
+<path d="M458,120 L558,120" fill="none" marker-end="url(#t6h-ah)" opacity="0.7" stroke="#fb7185" stroke-width="2"></path>
+<!-- Nó 3: Aprendizado -->
+<g filter="url(#t6h-glow)"><rect fill="#2a0f16" height="64" rx="14" stroke="url(#t6h-grad)" stroke-width="2" width="160" x="558" y="88"></rect></g>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="16" font-weight="700" text-anchor="middle" x="638" y="114">Learning</text>
+<text fill="#fecdd3" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="638" y="134">becomes a rule</text>
+<!-- Seta 3→4 -->
+<path d="M718,120 L800,120" fill="none" marker-end="url(#t6h-ah)" opacity="0.7" stroke="#fb7185" stroke-width="2"></path>
+<!-- Nó 4: Próximo Ciclo -->
+<rect fill="#2a0f16" height="64" rx="14" stroke="#fb7185" stroke-width="2" width="160" x="800" y="88"></rect>
+<text fill="#fb7185" font-family="Inter,sans-serif" font-size="15" font-weight="700" text-anchor="middle" x="880" y="114">Next</text>
+<text fill="#fecdd3" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="880" y="134">improved cycle</text>
+<!-- Seta ciano fecha o loop: 4 → 1 (por baixo) -->
+<path d="M880,152 C880,200 120,200 120,152" fill="none" marker-end="url(#t6h-ahc)" opacity="0.8" stroke="#38bdf8" stroke-dasharray="6,4" stroke-width="2"></path>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="12" opacity="0.9" text-anchor="middle" x="500" y="218">continuous improvement loop</text>
+</svg>
+</div>
+<!-- MAPA DA TRILHA -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold mb-6">Learning path map</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-rose-500/30 p-5 transition-all" href="#modulo-6-1">
+<div class="flex items-center justify-between mb-2">
+<span class="text-rose-400 font-bold text-sm">6.1</span>
+<span class="text-xs text-neutral-500">~50 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-rose-400 transition-colors">🔁 The Learning Cycle</h3>
+<p class="text-xs text-neutral-400">Celebrating isn’t enough — find out why</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-rose-500/30 p-5 transition-all" href="#modulo-6-2">
+<div class="flex items-center justify-between mb-2">
+<span class="text-rose-400 font-bold text-sm">6.2</span>
+<span class="text-xs text-neutral-500">~50 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-rose-400 transition-colors">🏆 Accumulated operational intelligence</h3>
+<p class="text-xs text-neutral-400">All 6 layers united — portfolio capstone</p>
+</a>
+</div>
+</section>
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<!-- MODULO 6.1 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-6-1">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-rose-400 font-bold">6.1</span>
+<span class="text-xs text-neutral-500">~50 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">🔁 The Learning Cycle</h3>
+<p class="text-neutral-400 text-sm">You made it this far because you learned to build the system. Now comes the layer that separates those who grow from those who stagnate: closing the loop. Every result is a lesson—if you know how to figure out why.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🎉</span>
+<div>
+<span class="font-medium">Celebrating isn’t enough — find out why</span>
+<span class="text-neutral-500 text-sm ml-2">- The channel mistake that taught you nothing</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The distinction between celebrating a result and learning from it. One video got 50× the average—the creator celebrated, the channel carried on as usual, and six months later no one knew how to replicate it. Success without extracting lessons is wasted luck.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Exceptional results are data. Anyone who doesn’t dissect them misses the most valuable information the system can offer. Celebration is necessary — but it should last 5 minutes. Analysis, 30.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Learning extraction, result as data, incomplete cycle, post-delivery analysis.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">❓</span>
+<div>
+<span class="font-medium">The 8 post-result questions</span>
+<span class="text-neutral-500 text-sm ml-2">- The protocol that closes the loop</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">A protocol of 8 questions to ask after any significant result (positive or negative): Topic, Title, Image, Promise, Structure, Comments, Repeat?, Adjust?</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Without a fixed checklist, post-result analysis is selective—you remember what you already knew and overlook what’s new. The 8 questions direct your attention to angles you would otherwise forget.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Post-result protocol, analysis checklist, success variables, standardized extraction.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">⛽</span>
+<div>
+<span class="font-medium">Feedback as fuel</span>
+<span class="text-neutral-500 text-sm ml-2">- Client, data, error: 3 sources that feed the cycle</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The 3 richest sources of feedback for anyone operating a knowledge system: the client (reaction, request, complaint), the data (metrics, engagement, usage rate), and the error (what failed and why).</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Most people only process positive feedback and ignore the other two—which are the most informative. An error is the most honest signal the system sends.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Customer feedback, usage metrics, error analysis, signal sources, cycle input.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🔗</span>
+<div>
+<span class="font-medium">Close the loop</span>
+<span class="text-neutral-500 text-sm ml-2">- Learning becomes input for the next cycle</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The deliberate act of turning what you learned into something that changes the next cycle: updating a prompt, revising a brief, or adding a rule to the playbook. Without this, the learning stays in your memory and disappears.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">The difference between a system that evolves and one that just runs is this step. The loop only closes when learning becomes an artifact—not an intention.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Closing the loop, learning as an artifact, system update, closed vs. open cycle.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">✏️</span>
+<div>
+<span class="font-medium">Continuous refinement of prompts/briefs/playbooks</span>
+<span class="text-neutral-500 text-sm ml-2">- Version 2.0, 3.0, 4.0 of your toolkit</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The process for versioning and improving your main artifacts: prompts that get more precise with each use, briefs that accumulate context, playbooks that incorporate what worked and discard what didn’t.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Anyone using last year’s prompt is falling behind. The v4.0 prompt, which incorporated 12 feedback cycles, is incomparably more efficient than the original v1.0.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Artifact versioning, prompt v2.0, iterative refinement, quality accumulation.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">📂</span>
+<div>
+<span class="font-medium">Decision history as an asset</span>
+<span class="text-neutral-500 text-sm ml-2">- Why you made the decision you made</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The record of the decisions that shaped your system: why you chose that briefing format, why you dropped that template, what made you change your approach. The history is the system manual no one else has.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Without a record, you repeat the same mistakes (memory fails). With a record, each mistake happens only once—and the reasoning behind good decisions is available for similar situations.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Decision log, documented reasoning, system memory, intangible asset.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">📡</span>
+<div>
+<span class="font-medium">Signs that the system is truly evolving</span>
+<span class="text-neutral-500 text-sm ml-2">- vs. just running it</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">Concrete signs that your system is evolving: prompts with a version higher than 1.0, playbooks updated in the last 30 days, at least 1 documented and incorporated error, and average task time decreasing across cycles.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">It’s easy to convince yourself you’re making progress when you’re only running things. Objective indicators eliminate the illusion and show where the loop is open.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Progress indicators, living system vs. static system, cycle audit, signs of stagnation.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Botoes -->
+<div class="p-6 border-t border-dark-600">
+<div class="flex flex-wrap justify-start gap-3">
+<button class="px-4 py-2 bg-rose-500/20 text-rose-400 rounded-lg text-sm font-medium hover:bg-rose-500/30 transition-colors" onclick="openModal('modal-6-1')">
+            View in Modal
+          </button>
+<a class="px-4 py-2 bg-rose-600 text-white rounded-lg text-sm font-medium hover:bg-rose-500 transition-colors" href="modulo-6-1.html">
+            View Full →
+          </a>
+</div>
+</div>
+</div>
+<!-- MODULO 6.2 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-6-2">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-rose-400 font-bold">6.2</span>
+<span class="text-xs text-neutral-500">~50 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">🏆 Accumulated operational intelligence <span class="text-rose-400 text-sm font-semibold ml-2">CAPSTONE</span></h3>
+<p class="text-neutral-400 text-sm">All 6 layers united: Prompt → Intent → Context → Effective Use → Architecture → Evolution. Here you complete the pyramid, build your portfolio piece, and learn to present it—on LinkedIn, on your résumé, and in an interview.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🔗</span>
+<div>
+<span class="font-medium">Putting it all together: the 6 layers in action</span>
+<span class="text-neutral-500 text-sm ml-2">- How each path feeds into the next</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The integrated view of the 6 layers: how a good prompt depends on clear intent, which depends on rich context, which is put to use in a method, which scales through architecture, and which improves through evolution. The complete pyramid in action.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">If you see the 6 layers separately, you have 6 tools. If you see how they connect, you have a system. The difference in results is exponential.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Integrated system, 6 layers, complete pyramid, systems thinking, interdependence of the learning paths.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">📅</span>
+<div>
+<span class="font-medium">Review rhythms without bureaucracy</span>
+<span class="text-neutral-500 text-sm ml-2">- 10 minutes weekly, 30 minutes monthly</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">A lightweight system review protocol: a 10-minute weekly check-in (what worked this week, what to adjust) and a 30-minute monthly review (update artifacts, version prompts, check indicators).</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Heavyweight rituals don’t last. Lightweight rituals that fit into your existing routine stick around for years. The secret is to reduce friction to a minimum without giving up cadence.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Periodic review, light cadence, steady pace of improvement, low friction, sustainable habit.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">📊</span>
+<div>
+<span class="font-medium">Metrics that matter for YOUR goal</span>
+<span class="text-neutral-500 text-sm ml-2">- There’s no universal metric</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">Defining the 2-3 metrics that actually show whether YOUR system is improving—not the generic metrics every productivity post mentions. A creator’s metrics differ from a manager’s, and both differ from a freelancer’s.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Measuring what doesn’t matter creates the illusion of progress. Measuring what matters creates real accountability. Your progress metric should be what you’d look at in 6 months to know whether it was worth it.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Personal metrics, progress indicators, system goal, focus on 2-3 KPIs.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🔧</span>
+<div>
+<span class="font-medium">When to rewrite vs. adjust</span>
+<span class="text-neutral-500 text-sm ml-2">- The end-of-life diagnosis of an artifact</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">Signs that indicate whether a prompt, brief, or playbook needs incremental adjustment or a complete rewrite: number of accumulated patches, a change in objective, and consistently below-expected results.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Continuing to adjust an artifact that needs to be rewritten wastes time and makes the system worse. Recognizing the right moment to reset is an advanced operational skill.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Artifact end of life, rewrite vs. patch, system diagnosis, knowledge refactoring.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">📈</span>
+<div>
+<span class="font-medium">Compounding advantage</span>
+<span class="text-neutral-500 text-sm ml-2">- Why the latecomer overtakes you in 6 months</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The math of compound advantage applied to the knowledge system: someone who joins 6 months later but applies the evolution cycles overtakes someone who joined earlier and kept collecting scattered prompts. Each completed cycle multiplies the previous one.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">The thesis of the latecomer who learns the right way: joining late with a system &gt; joining early without a system. Compound advantage is not a metaphor—it is the actual mechanism by which well-operated systems outperform well-collected tools.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Compounding advantage, multiplicative cycles, strategic laggard, quality &gt; quantity.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🗺️</span>
+<div>
+<span class="font-medium">Capstone as a portfolio</span>
+<span class="text-neutral-500 text-sm ml-2">- System map + LinkedIn + résumé + interview</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">How to put together your “AI Knowledge System Map” on 1 page — and how to present it: an adaptable LinkedIn post, a résumé description, an interview line (“I don’t use AI; I operate an AI system”).</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">What isn’t visible doesn’t exist in the market. Turning the system you built into a portfolio piece communicates competence in a way a list of tools never can.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">System portfolio, knowledge map, skills communication, market differentiation.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">⚡</span>
+<div>
+<span class="font-medium">Slow User Shortcut</span>
+<span class="text-neutral-500 text-sm ml-2">- The one question that speeds everything up</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-rose-400 font-semibold">What is:</span>
+<p class="text-neutral-300 text-sm">The one question that triggers the evolution cycle, no fuss: <em>"What do I keep repeating that could be better?"</em> Applied to any recurring task, it identifies the most valuable next refinement for the system.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Most system improvements come from recurring tasks, not one-off projects. People who look at repetitions with an eye for improvement gain ground where others don’t even realize there’s something to improve.</p>
+</div>
+<div>
+<span class="text-rose-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Evolution question, recurring tasks, incremental improvement, latecomer’s shortcut.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Botoes -->
+<div class="p-6 border-t border-dark-600">
+<div class="flex flex-wrap justify-start gap-3">
+<button class="px-4 py-2 bg-rose-500/20 text-rose-400 rounded-lg text-sm font-medium hover:bg-rose-500/30 transition-colors" onclick="openModal('modal-6-2')">
+            View in Modal
+          </button>
+<a class="px-4 py-2 bg-rose-600 text-white rounded-lg text-sm font-medium hover:bg-rose-500 transition-colors" href="modulo-6-2.html">
+            View Full →
+          </a>
+</div>
+</div>
+</div>
+<!-- NAVEGACAO RODAPE -->
+<div class="flex flex-col sm:flex-row gap-4 mt-12">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="../../index.html">
+        ← Back to Start
+      </a>
+<a class="flex-1 text-center px-6 py-3 bg-rose-600 text-white rounded-lg font-semibold hover:bg-rose-500 transition-colors" href="../prova/index.html">
+        Take the Pyramid Test →
+      </a>
+</div>
+</main>
+<!-- MODAIS -->
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-6-1" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-rose-400 font-bold">6.1</span>
+<span class="font-semibold">The learning cycle</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-6-1.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-6-2" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-rose-400 font-bold">6.2</span>
+<span class="font-semibold">Accumulated operational intelligence (CAPSTONE)</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-6-2.html"></iframe>
+</div>
+</div>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>AI Knowledge Engineering — Applied Intelligence Pyramid · 2026</p>
+<p class="mt-2">A course <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) { modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+    }
+
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+    function updateIcons() {
+      if (document.documentElement.classList.contains('dark')) {
+        darkIcon.classList.add('hidden'); lightIcon.classList.remove('hidden');
+      } else {
+        lightIcon.classList.add('hidden'); darkIcon.classList.remove('hidden');
+      }
+    }
+    updateIcons();
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      updateIcons();
+    });
+  </script>
+</body>
+</html>

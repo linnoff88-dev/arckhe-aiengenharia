@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ruta 3 — Ingeniería de Contexto | Pirámide de la IA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    @keyframes ctx-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .ctx-a { animation: ctx-pulse 2.6s ease-in-out infinite; }
+      .ctx-a:nth-child(2){animation-delay:.3s} .ctx-a:nth-child(3){animation-delay:.6s}
+      .ctx-a:nth-child(4){animation-delay:.9s} .ctx-a:nth-child(5){animation-delay:1.2s}
+    }
+
+    /* Light mode overrides - OBRIGATORIO */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Light mode - cores de acento (trilha purple) */
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124, 58, 237, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124, 58, 237, 0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124, 58, 237, 0.18); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124, 58, 237, 0.06); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .group:hover .group-hover\:text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .hover\:border-purple-500\/30:hover { border-color: rgba(124, 58, 237, 0.25); }
+
+    /* Light mode - hovers das demais trilhas (nav) */
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+
+    /* Light mode - boxes auxiliares */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - SVG futurista contido */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha3/" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha3/" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha3/" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha3/" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="./" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">Pirámide de la IA</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intención</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Contexto</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Aprovechamiento</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Arquitectura</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolución</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">
+        RUTA 3 · INGENIERÍA DE CONTEXTO
+      </span>
+<h1 class="text-3xl sm:text-4xl font-bold mb-4">🗺️ Ingeniería de Contexto</h1>
+<p class="text-lg text-neutral-400 max-w-3xl mb-2">
+<strong class="text-purple-400">"El contexto es el mapa."</strong> ¿Qué necesita saber la IA para entender mejor? Aprende a proporcionarle el mundo que necesita ver y descubre que las respuestas malas casi siempre se deben a un contexto pobre.
+      </p>
+<p class="text-neutral-400 max-w-3xl">
+<strong class="text-neutral-300">El caso de esta ruta — la campaña genérica:</strong> "Crea una campaña para mi proyecto" genera algo que serviría para cualquier empresa del planeta. La IA no era débil: estaba CIEGA. Mismo prompt + carpeta de contexto (público, ejemplos que funcionaron, tono de marca, límites) → campaña que parece hecha por alguien que trabaja allí desde hace años. Ni el prompt ni la intención resuelven la ceguera: solo el contexto.
+      </p>
+<!-- Stats Grid -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">2</div>
+<div class="text-xs text-neutral-400">Módulos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">14</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">~1h45</div>
+<div class="text-xs text-neutral-400">Duración</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">Medio</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- HERO SVG -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-12 overflow-hidden">
+<svg aria-label="Diagrama: un prompt a ciegas genera una respuesta genérica; un prompt + una carpeta de contexto (público, tono, ejemplos, reglas) genera una respuesta personalizada" class="w-full h-auto" role="img" viewbox="0 0 1000 240">
+<defs>
+<lineargradient id="t3h-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#c084fc"></stop><stop offset="1" stop-color="#a855f7"></stop>
+</lineargradient>
+<filter height="180%" id="t3h-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="t3h-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#a855f7" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="t3h-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"></path></marker>
+<marker id="t3h-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#t3h-grid)" height="240" width="1000" x="0" y="0"></rect>
+<!-- Prompt cego (topo) -->
+<rect fill="#1a1230" height="36" opacity="0.7" rx="9" stroke="#6b21a8" stroke-width="1.5" width="150" x="30" y="20"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="105" y="43">Prompt sin contexto</text>
+<path d="M180,38 L250,80" fill="none" marker-end="url(#t3h-ahc)" opacity="0.5" stroke="#6b21a8" stroke-width="1.5"></path>
+<rect fill="#1a1230" height="36" opacity="0.6" rx="9" stroke="#6b21a8" stroke-width="1.5" width="150" x="250" y="65"></rect>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="325" y="88">Respuesta genérica 😐</text>
+<!-- Pasta de contexto (itens) -->
+<g class="ctx-a"><rect fill="#1a1230" height="28" rx="8" stroke="#38bdf8" stroke-width="2" width="130" x="30" y="90"></rect><text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="95" y="109">Público objetivo</text></g>
+<g class="ctx-a"><rect fill="#1a1230" height="28" rx="8" stroke="#38bdf8" stroke-width="2" width="130" x="30" y="126"></rect><text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="95" y="145">Tono de la marca</text></g>
+<g class="ctx-a"><rect fill="#1a1230" height="28" rx="8" stroke="#38bdf8" stroke-width="2" width="130" x="30" y="162"></rect><text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="95" y="181">Buenos ejemplos</text></g>
+<g class="ctx-a"><rect fill="#1a1230" height="28" rx="8" stroke="#38bdf8" stroke-width="2" width="130" x="30" y="198"></rect><text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="95" y="217">Reglas/límites</text></g>
+<!-- Setas contexto → prompt forte -->
+<path d="M160,104 C220,104 230,120 310,120" fill="none" marker-end="url(#t3h-ahc)" opacity="0.7" stroke="#38bdf8" stroke-width="1.8"></path>
+<path d="M160,140 C220,140 230,120 310,120" fill="none" marker-end="url(#t3h-ahc)" opacity="0.7" stroke="#38bdf8" stroke-width="1.8"></path>
+<path d="M160,176 C220,176 230,120 310,120" fill="none" marker-end="url(#t3h-ahc)" opacity="0.7" stroke="#38bdf8" stroke-width="1.8"></path>
+<path d="M160,212 C220,212 230,120 310,120" fill="none" marker-end="url(#t3h-ahc)" opacity="0.7" stroke="#38bdf8" stroke-width="1.8"></path>
+<!-- Prompt forte + contexto -->
+<g filter="url(#t3h-glow)">
+<rect fill="#1a1230" height="52" rx="14" stroke="url(#t3h-grad)" stroke-width="2.5" width="180" x="310" y="94"></rect>
+</g>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="16" font-weight="600" text-anchor="middle" x="400" y="118">Prompt + Contexto</text>
+<text fill="#ddc2ff" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="400" y="137">mapa completo</text>
+<!-- Seta final -->
+<path d="M490,120 L610,120" fill="none" marker-end="url(#t3h-ah)" opacity="0.8" stroke="#c084fc" stroke-width="2"></path>
+<!-- Resposta personalizada -->
+<rect fill="#1a1230" height="52" rx="14" stroke="#c084fc" stroke-width="2" width="200" x="610" y="94"></rect>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="710" y="116">Respuesta personalizada</text>
+<text fill="#ddc2ff" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="710" y="134">parece hecha por alguien de adentro ✓</text>
+<!-- Label pasta -->
+<text fill="#a855f7" font-family="Inter,sans-serif" font-size="10" font-weight="600" opacity="0.9" text-anchor="middle" x="95" y="78">📁 CARPETA DE CONTEXTO</text>
+<!-- VS label -->
+<text fill="#6b7280" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="325" y="58">sin contexto ↑</text>
+<text fill="#6b7280" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="325" y="68">con contexto ↓</text>
+</svg>
+</div>
+<!-- MAPA DA TRILHA -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold mb-6">Mapa de la ruta</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-purple-500/30 p-5 transition-all" href="#modulo-3-1">
+<div class="flex items-center justify-between mb-2">
+<span class="text-purple-400 font-bold text-sm">3.1</span>
+<span class="text-xs text-neutral-500">~50 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-purple-400 transition-colors">🗂️ Qué es el contexto</h3>
+<p class="text-xs text-neutral-400">Más allá del prompt: el mapa completo</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-purple-500/30 p-5 transition-all" href="#modulo-3-2">
+<div class="flex items-center justify-between mb-2">
+<span class="text-purple-400 font-bold text-sm">3.2</span>
+<span class="text-xs text-neutral-500">~55 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-purple-400 transition-colors">🛠️ El contexto en la práctica</h3>
+<p class="text-xs text-neutral-400">Del briefing base al mini briefing</p>
+</a>
+</div>
+</section>
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- MODULO 3.1 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-1">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-purple-400 font-bold">3.1</span>
+<span class="text-xs text-neutral-500">~50 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">🗂️ Qué es el contexto (más allá del prompt)</h3>
+<p class="text-neutral-400 text-sm">Las malas respuestas casi siempre se deben a un contexto pobre. Aprendes a identificar todos los tipos de contexto que la IA puede recibir y empiezas a armar tu primera carpeta de contexto real.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🗺️</span>
+<div>
+<span class="font-medium">Contexto = mapa</span>
+<span class="text-neutral-500 text-sm ml-2">- Las respuestas malas casi siempre se deben a un contexto pobre</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">El contexto es todo lo que le proporcionas a la IA además de la solicitud inmediata: historial de la conversación, archivos, ejemplos, reglas. Sin contexto, la IA navega sin mapa: llega a algún lugar, pero rara vez al lugar correcto.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Pasar de «¿por qué se equivocó la IA?» a «¿qué no le conté?» es el mayor cambio de mentalidad de la pirámide. Resuelve el 80% de las frustraciones sin cambiar el modelo ni el prompt.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Contexto como mapa, brecha de información, diagnóstico de una respuesta deficiente, mentalidad de contexto.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">📦</span>
+<div>
+<span class="font-medium">Los tipos de contexto</span>
+<span class="text-neutral-500 text-sm ml-2">- Archivos, imágenes, historial, ejemplos, reglas, marca</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">El inventario completo de lo que puedes enviarle a la IA: archivos de texto y hojas de cálculo, imágenes y PDF, historial de conversaciones anteriores, ejemplos de lo que funciona y lo que no, reglas internas, identidad de la marca y perfil del público.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La mayoría de las personas solo usa texto libre. Conocer todos los tipos abre un menú de posibilidades que la mayoría ignora, y cada tipo resuelve un problema diferente.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Tipos de contexto, archivos, imágenes, historial, ejemplos positivos/negativos, reglas, identidad de marca.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">📎</span>
+<div>
+<span class="font-medium">Adjuntar archivos y referencias</span>
+<span class="text-neutral-500 text-sm ml-2">- Cómo maneja cada herramienta lo que subes</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">La guía práctica para subir archivos a ChatGPT, Claude y Gemini: formatos aceptados, tamaño máximo, diferencia entre pegar texto y subirlo, qué ve realmente la IA después del envío.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Cada herramienta se comporta de manera diferente. Quien no lo sabe puede pensar que la IA «ignoró» el archivo, cuando en realidad el archivo no se procesó correctamente.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Carga de archivos, formatos compatibles, pegar vs. cargar, ventana de contexto del archivo, diferencias entre herramientas.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">✅</span>
+<div>
+<span class="font-medium">Ejemplos positivos y negativos como contexto</span>
+<span class="text-neutral-500 text-sm ml-2">- "Así sí, así no" enseña más que una instrucción</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Mostrarle a la IA un ejemplo de lo que quieres (así sí) y otro de lo que no quieres (así no) es la forma más eficiente de ajustar el resultado. Funciona porque la IA aprende a partir de patrones: los ejemplos son patrones concretos.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Tres párrafos de instrucciones equivalen a dos ejemplos bien elegidos. Ahorra tiempo y aumenta la precisión — especialmente en tono y estilo, que son difíciles de describir con palabras.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Ejemplos positivos, ejemplos negativos, few-shot con contexto, calibración del tono.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🎨</span>
+<div>
+<span class="font-medium">Identidad de marca y voz como contexto reutilizable</span>
+<span class="text-neutral-500 text-sm ml-2">- El contexto que construyes una vez y usas siempre</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Un bloque de texto fijo que describe cómo te comunicas tú (o tu marca): tono, vocabulario, qué evitar y cómo tratar al cliente. Lo escribes una vez y lo pegas al inicio de cada conversación — la IA mantiene la coherencia automáticamente.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Sin contexto de voz, cada respuesta parece de una empresa diferente. Con él, incluso quien acaba de abrir la herramienta genera algo con el tono adecuado. Es el mayor retorno por inversión en contexto.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Identidad de marca, voz de marca, consistencia, contexto fijo reutilizable, bloque de identidad.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">⚖️</span>
+<div>
+<span class="font-medium">Cuando demasiado contexto estorba</span>
+<span class="text-neutral-500 text-sm ml-2">- Ruido × señal: qué incluir y qué quitar</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">No todo lo que sabes es útil para que la IA lo sepa. El contexto irrelevante diluye lo que importa, aumenta el costo y a veces empeora la respuesta. El ejercicio consiste en separar la señal (lo que orienta) del ruido (lo que desvía).</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La habilidad avanzada de trabajar con contexto no consiste en «ponerlo todo», sino en saber qué dejar fuera. Quien aprende esto resuelve conversaciones más rápido y obtiene respuestas más precisas.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Ruido × señal, ventana de contexto, contexto mínimo suficiente, curaduría de información.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">🔒</span>
+<div>
+<span class="font-medium">Privacidad y datos: qué NUNCA debes pegar en la IA</span>
+<span class="text-neutral-500 text-sm ml-2">- ¿Compartirías esto en un grupo público?</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Qué nunca incluir en el contexto: datos de clientes identificados, contraseñas y tokens, contratos confidenciales, datos de salud, CPF/CNPJ reales. Cómo anonimizar antes de usar: [NOME], [EMPRESA], [CPF]. La regla de oro: «¿Lo pegarías en un grupo público de WhatsApp?»</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Cada herramienta tiene una política de uso de datos diferente. Los datos sensibles que pegues por accidente pueden usarse para entrenamiento, quedar expuestos en brechas de seguridad o infringir la LGPD. Un minuto de anonimización evita años de problemas.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Datos sensibles, anonimización, [NOMBRE]/[EMPRESA], LGPD, regla del grupo público, política de datos de las herramientas.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-1')">
+          Ver en Modal
+        </button>
+<a class="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors" href="modulo-3-1.html">
+          Ver completo
+        </a>
+</div>
+</div>
+<!-- MODULO 3.2 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-2">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-purple-400 font-bold">3.2</span>
+<span class="text-xs text-neutral-500">~55 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">🛠️ Ingeniería de contexto en la práctica</h3>
+<p class="text-neutral-400 text-sm">De la teoría a una carpeta de contexto funcional: creas el briefing permanente de tu proyecto, aprendes el mini briefing de 5 líneas y descubres cómo aplicarlo en tu profesión específica.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">📋</span>
+<div>
+<span class="font-medium">El briefing permanente</span>
+<span class="text-neutral-500 text-sm ml-2">- El documento que pegas/adjuntas siempre</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Un documento vivo — de una a tres páginas — que resume todo lo que la IA necesita saber sobre tu proyecto: quién eres, quién es tu público, qué ejemplos funcionan, cuál es el tono y cuáles son las restricciones. Lo mantienes actualizado y lo pegas al inicio de cada conversación nueva.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La mayoría de las personas vuelve a explicar el proyecto cada vez. El briefing permanente elimina ese desperdicio: 30 segundos para pegarlo frente a 10 minutos para volver a explicarlo. También garantiza la coherencia entre sesiones.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Briefing permanente, documento vivo, referencia rápida, consistencia entre sesiones, Kit T3.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">📁</span>
+<div>
+<span class="font-medium">Estructura de carpetas que la IA entiende</span>
+<span class="text-neutral-500 text-sm ml-2">- Organizar para reutilizar, no para archivar</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Una estructura de carpetas específica para el contexto de IA: /briefing (quiénes somos), /exemplos-bons, /exemplos-ruins, /restricoes, /publico. A diferencia de una carpeta genérica de archivos, cada subcarpeta tiene un propósito contextual claro.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Cuando necesitas contexto rápido, sabes exactamente dónde está. Organizarlo así también facilita las actualizaciones: cuando cambia el público, solo actualizas /publico.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Carpeta de contexto, estructura por tipo, /briefing /exemplos /restricoes, mantenimiento modular.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">♻️</span>
+<div>
+<span class="font-medium">Transformar el historial en contexto reutilizable</span>
+<span class="text-neutral-500 text-sm ml-2">- Tus conversaciones pasadas valen oro</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Cómo extraer de conversaciones anteriores el contexto implícito que ya proporcionaste: decisiones, ejemplos aprobados, correcciones que la IA aceptó. Lo resumes en 3-5 viñetas y lo conviertes en material para el próximo briefing.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Toda buena conversación contiene contexto que construiste de forma iterativa. Perderlo cuando se cierra la sesión es tirar a la basura un trabajo que tomó tiempo. Extraerlo es reciclar inteligencia.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Historial como contexto, extracción de decisiones, reutilización de sesiones, memoria manual.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🎯</span>
+<div>
+<span class="font-medium">Dossier del público objetivo</span>
+<span class="text-neutral-500 text-sm ml-2">- 1 página que lo mejora todo</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Un documento de una página que describe quién leerá o usará el resultado: perfil demográfico, principales dificultades, lenguaje con el que conecta y qué lo aleja. La IA usa esta información para ajustar automáticamente el tono, los ejemplos y la profundidad.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La IA escribe para quien dices que es el lector. Sin un dossier, asume que es un lector genérico. Con un dossier, los correos, las publicaciones y los textos llegan al nivel adecuado sin tener que rehacerlos.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Dossier de audiencia, ICP, perfil del lector, calibración automática del tono, personas.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🚧</span>
+<div>
+<span class="font-medium">Restricciones y reglas internas como barrera</span>
+<span class="text-neutral-500 text-sm ml-2">- Lo que la IA nunca debe sugerir</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Una lista explícita de prohibiciones y límites: "nunca menciones a la competencia por su nombre", "no uses humor", "no prometas plazos sin aprobación interna", "cumple la ley X". Estas barreras evitan problemas antes de que ocurran.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Sin restricciones explícitas, la IA improvisa dentro de lo que considera razonable, que puede no coincidir con lo que tu empresa, cliente o área de compliance considera razonable. Escribir los límites es crear seguridad operativa.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Restricciones de contexto, barreras, cumplimiento, lista de prohibiciones, seguridad operativa.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">⚡</span>
+<div>
+<span class="font-medium">Atajo para rezagados: el mini briefing de 5 líneas</span>
+<span class="text-neutral-500 text-sm ml-2">- El contexto mínimo que ya funciona</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">¿No tienes tiempo para el briefing completo? Usa las 5 líneas mínimas: (1) Quién soy / quién es la empresa, (2) Para quién es esto, (3) Objetivo de este resultado específico, (4) Tono deseado, (5) Una restricción crítica. En 2 minutos creas un contexto que multiplica la calidad de la respuesta.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La barrera de un briefing largo hace que la gente se rinda y pegue un prompt sin contexto. El mini briefing elimina esa barrera: cualquier persona, con cualquier nivel de prisa, puede aplicarlo. Es el contexto mínimo viable.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Mini briefing, 5 líneas de contexto, MVP de contexto, baja fricción, atajo práctico.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 text-sm font-bold flex items-center justify-center flex-shrink-0">7</span>
+<span class="text-lg">👤</span>
+<div>
+<span class="font-medium">En tu profesión</span>
+<span class="text-neutral-500 text-sm ml-2">- 5 perfiles: profesor, abogado, vendedor, gerente, creador</span>
+</div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div>
+<span class="text-purple-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Contexto específico por profesión: profesor (perfil del grupo + currículo + nivel); abogado (modelos del bufete + jurisprudencia habitual + cliente); vendedor (ICP + objeciones frecuentes + ciclo); gerente (metas del trimestre + restricciones presupuestarias); creador (nicho + 3 publicaciones con buen rendimiento + tono).</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">El principio es universal, pero el contexto es específico. Ver tu trabajo concreto transforma un concepto abstracto en una acción inmediata: saldrás de aquí sabiendo exactamente qué poner en tu carpeta.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Contexto por profesión, profesor/abogado/vendedor/gerente/creador, aplicación específica, carpeta profesional.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-2')">
+          Ver en Modal
+        </button>
+<a class="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors" href="modulo-3-2.html">
+          Ver completo
+        </a>
+</div>
+</div>
+<!-- NAVEGACAO RODAPE -->
+<div class="flex gap-4 mt-8">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 hover:bg-dark-600 rounded-lg font-semibold transition-colors" href="../../index.html">
+        ← Volver al inicio
+      </a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors" href="../trilha4/index.html">
+        Próxima Ruta: Aprovechamiento →
+      </a>
+</div>
+</main>
+<!-- MODAIS -->
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-1" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-purple-400 font-bold">3.1</span>
+<span class="font-semibold">Qué es el contexto (más allá del prompt)</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-1.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-2" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center flex-shrink-0">
+<div class="flex items-center space-x-3">
+<span class="text-purple-400 font-bold">3.2</span>
+<span class="font-semibold">Ingeniería de contexto en la práctica</span>
+</div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-2.html"></iframe>
+</div>
+</div>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>Ingeniería de Conocimiento de la IA — Pirámide de la Inteligencia Aplicada · 2026</p>
+<p class="mt-2">Un curso <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<script>
+    function toggleTopic(btn) {
+      const item = btn.closest('.topic-item');
+      const explanation = item.querySelector('.topic-explanation');
+      explanation.classList.toggle('active');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.add('hidden');
+      });
+      document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+    function updateThemeIcon() {
+      if (document.documentElement.classList.contains('dark')) {
+        darkIcon.classList.add('hidden');
+        lightIcon.classList.remove('hidden');
+      } else {
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+      }
+    }
+    updateThemeIcon();
+
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      updateThemeIcon();
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+      document.documentElement.classList.remove('dark');
+      updateThemeIcon();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Módulo 4.1 — Del intento al patrón | Ruta 4</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+
+    /* Light mode overrides - OBRIGATORIO */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Dark mode - bordas suaves */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Light mode - cores de acento amber */
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(217, 119, 6, 0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(217, 119, 6, 0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(217, 119, 6, 0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(217, 119, 6, 0.18); }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(217, 119, 6, 0.06); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(217, 119, 6, 0.08); }
+
+    /* Light mode - hovers nav */
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-teal-400:hover { color: #0d9488; }
+    html:not(.dark) .hover\:bg-teal-500\/10:hover { background-color: rgba(13, 148, 136, 0.08); }
+    html:not(.dark) .hover\:text-rose-400:hover { color: #9f1239; }
+    html:not(.dark) .hover\:bg-rose-500\/10:hover { background-color: rgba(225, 29, 72, 0.08); }
+
+    /* Light mode - boxes auxiliares */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.06); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #b91c1c; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(185, 28, 28, 0.06); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(185, 28, 28, 0.25); }
+    html:not(.dark) .text-green-400 { color: #15803d; }
+    html:not(.dark) .bg-green-900\/20 { background-color: rgba(21, 128, 61, 0.06); }
+    html:not(.dark) .border-green-500\/30 { border-color: rgba(21, 128, 61, 0.25); }
+
+    /* Light mode - remove gradientes */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - SVG */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/aiengenharia/curso/trilha4/modulo-4-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/en/curso/trilha4/modulo-4-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/aiengenharia/es/curso/trilha4/modulo-4-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha4/modulo-4-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha4/modulo-4-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-4-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🔺</span>
+<span class="font-bold text-lg hidden sm:inline">Pirámide de la IA</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span><span class="hidden sm:inline">Prompt</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span><span class="hidden sm:inline">Intención</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span><span class="hidden sm:inline">Contexto</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="index.html">
+<span class="sm:hidden">T4</span><span class="hidden sm:inline">Aprovechamiento</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-teal-400 hover:bg-teal-500/10 transition-colors" href="../trilha5/index.html">
+<span class="sm:hidden">T5</span><span class="hidden sm:inline">Arquitectura</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors" href="../trilha6/index.html">
+<span class="sm:hidden">T6</span><span class="hidden sm:inline">Evolución</span>
+</a>
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+<nav class="text-sm text-neutral-500">
+<a class="hover:text-neutral-300" href="../../index.html">Inicio</a>
+<span class="mx-2">/</span>
+<a class="hover:text-neutral-300" href="index.html">Ruta 4</a>
+<span class="mx-2">/</span>
+<span class="text-neutral-300">Módulo 4.1</span>
+</nav>
+</div>
+<!-- HEADER DO MÓDULO -->
+<header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-10 mt-4 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full mb-3">
+        MÓDULO 4.1
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-3">🔬 Del intento al patrón</h1>
+<p class="text-neutral-400 max-w-3xl">
+        Ingeniería inversa del acierto: cómo extraer la estructura de lo que funcionó, convertirla en una plantilla y crear tu primer playbook. T4 nace de la semilla plantada en T1 — versionar prompts — y prepara T5, donde los procesos se convierten en sistemas.
+      </p>
+<div class="grid grid-cols-4 gap-4 mt-6 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">7</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">55</div>
+<div class="text-xs text-neutral-400">Minutos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Medio</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Método</div>
+<div class="text-xs text-neutral-400">Tipo</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- TOPICO 1 -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">📉 Por qué se pierde el conocimiento que no se registra</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Todo profesional ya ha vivido esto: un acierto que se perdió. Encontraste la forma correcta de hacer algo, funcionó mejor de lo esperado y, tres meses después, no puedes repetirlo. No es falta de talento. Es <strong class="text-amber-400">fallo del sistema</strong>.
+      </p>
+<div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-6 mb-6">
+<p class="text-amber-400 font-semibold mb-3">El acierto que se perdió</p>
+<p class="text-neutral-300 text-sm leading-relaxed mb-3">
+          Publicaste una publicación que tuvo un rendimiento 10× superior al promedio. Guardados, compartidos, mensajes directos. Tres meses después alguien del equipo pregunta: «¿cómo hiciste esa?». Intentas replicarla. El resultado es mediocre.
+        </p>
+<p class="text-neutral-300 text-sm leading-relaxed">
+          El prompt estaba bien. La intención estaba clara. El contexto estaba bien configurado. Pero ninguna de estas capas fue <strong class="text-amber-400">registrada</strong>. El conocimiento existió durante 24 horas y se evaporó. Este módulo enseña a cerrar ese vacío.
+        </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<h3 class="text-red-400 font-semibold mb-3 flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-red-900/40 flex items-center justify-center text-xs">✗</span>
+            Sin registro: qué sucede
+          </h3>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Cada acierto empieza desde cero la próxima vez</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> El equipo no puede replicar lo que hiciste</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Los errores se repiten porque no se documentó la causa</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Hay progreso, pero no se acumula</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<h3 class="text-green-400 font-semibold mb-3 flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-green-900/40 flex items-center justify-center text-xs">✓</span>
+            Con registro: qué cambia
+          </h3>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Los aciertos se convierten en plantillas reutilizables</li>
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> El equipo replica sin necesitarte</li>
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Los errores se convierten en reglas de ajuste documentadas</li>
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Cada repetición mejora el proceso</li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> El cambio de mentalidad
+        </h3>
+<p class="text-neutral-300">Registrar no es burocracia: es <strong>instalar memoria en tu proceso</strong>. Un sistema que aprende acumula ventaja. Un sistema que olvida siempre vuelve a empezar desde el mismo punto.</p>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">📝 Qué registrar — y qué no vale la pena</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Registrar todo es inviable e inútil. La disciplina está en saber distinguir lo que tiene <strong class="text-amber-400">valor de reutilización</strong> que lo circunstancial. Usa el filtro de abajo antes de decidir si algo merece entrar en tu biblioteca.
+      </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<h3 class="text-green-400 font-semibold mb-3 flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-green-900/40 flex items-center justify-center text-xs">✓</span>
+            Registrar
+          </h3>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Prompt que generó un resultado sin editar</li>
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Estructura que tuvo un rendimiento superior al promedio</li>
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Error que se repitió más de una vez</li>
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Proceso que ejecutaste 3+ veces de la misma manera</li>
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Respuesta aprobada por el cliente/gestor a la primera</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<h3 class="text-red-400 font-semibold mb-3 flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-red-900/40 flex items-center justify-center text-xs">✗</span>
+            No vale la pena registrarlo
+          </h3>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Prompt que usaste una vez y descartaste</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Resultado muy específico de un contexto irrepetible</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> "Quedó bien" sin un criterio medible</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Proceso que depende de datos que cambian cada semana</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Respuesta que editaste más del 50% antes de usarla</li>
+</ul>
+</div>
+</div>
+<div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3">La regla de las 3 ejecuciones</h3>
+<p class="text-neutral-300 text-sm leading-relaxed">Si hiciste el mismo proceso de manera similar <strong>3 veces o más</strong>, merece un playbook. Menos de 3 es demasiado pronto: todavía estás descubriendo el patrón. Más de 3 sin registro significa que pierdes aprendizajes con cada repetición.</p>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">🔍 Ingeniería inversa de un contenido exitoso</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Toma cualquier publicación, correo electrónico o entrega que haya funcionado mejor de lo esperado y sigue los 5 pasos a continuación. El objetivo es extraer la <strong class="text-amber-400">estructura invisible</strong> detrás del acierto: la anatomía Dolor → Explicación → Ejemplo → Beneficio → CTA.
+      </p>
+<div class="space-y-3 mb-6">
+<!-- passo 1 -->
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<span class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 font-bold text-sm flex items-center justify-center flex-shrink-0">1</span>
+<div class="flex-1 w-0.5 bg-dark-600 mt-2 mb-0"></div>
+</div>
+<div class="pb-4 flex-1">
+<p class="font-semibold text-neutral-100">Identifica el dolor que aborda</p>
+<p class="text-neutral-400 text-sm mt-1">¿Qué problema del lector abordó este contenido? No lo que quisiste decir, sino lo que el lector sintió que le estaban diciendo.</p>
+<div class="mt-2 bg-dark-700/50 rounded-lg px-4 py-2">
+<p class="text-xs text-neutral-400"><em>Pregunta de captura:</em> <span class="text-amber-400">"¿Qué problema resolvió o puso en palabras este contenido?"</span></p>
+</div>
+</div>
+</div>
+<!-- passo 2 -->
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<span class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 font-bold text-sm flex items-center justify-center flex-shrink-0">2</span>
+<div class="flex-1 w-0.5 bg-dark-600 mt-2 mb-0"></div>
+</div>
+<div class="pb-4 flex-1">
+<p class="font-semibold text-neutral-100">Mapea la explicación central</p>
+<p class="text-neutral-400 text-sm mt-1">En una frase: ¿cuál era el argumento principal? No el tema, sino el argumento. ¿Qué se dijo que cambió la perspectiva?</p>
+<div class="mt-2 bg-dark-700/50 rounded-lg px-4 py-2">
+<p class="text-xs text-neutral-400"><em>Pregunta de captura:</em> <span class="text-amber-400">"En una frase, ¿cuál era la idea central?"</span></p>
+</div>
+</div>
+</div>
+<!-- passo 3 -->
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<span class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 font-bold text-sm flex items-center justify-center flex-shrink-0">3</span>
+<div class="flex-1 w-0.5 bg-dark-600 mt-2 mb-0"></div>
+</div>
+<div class="pb-4 flex-1">
+<p class="font-semibold text-neutral-100">Extrae el ejemplo utilizado</p>
+<p class="text-neutral-400 text-sm mt-1">¿Cuál fue el caso concreto, la analogía o el dato que hizo creíble el argumento? Ejemplo específico &gt; abstracción genérica, siempre.</p>
+<div class="mt-2 bg-dark-700/50 rounded-lg px-4 py-2">
+<p class="text-xs text-neutral-400"><em>Pregunta de captura:</em> <span class="text-amber-400">"¿Qué ejemplo o caso sustentó el argumento?"</span></p>
+</div>
+</div>
+</div>
+<!-- passo 4 -->
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<span class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 font-bold text-sm flex items-center justify-center flex-shrink-0">4</span>
+<div class="flex-1 w-0.5 bg-dark-600 mt-2 mb-0"></div>
+</div>
+<div class="pb-4 flex-1">
+<p class="font-semibold text-neutral-100">Nombra el beneficio claro</p>
+<p class="text-neutral-400 text-sm mt-1">¿Qué gana el lector al aplicar esto? El beneficio debe ser específico e inmediato: no «va a mejorar», sino «ahorrará X o evitará Y».</p>
+<div class="mt-2 bg-dark-700/50 rounded-lg px-4 py-2">
+<p class="text-xs text-neutral-400"><em>Pregunta de captura:</em> <span class="text-amber-400">"¿Qué beneficio concreto obtiene el lector con esto?"</span></p>
+</div>
+</div>
+</div>
+<!-- passo 5 -->
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<span class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 font-bold text-sm flex items-center justify-center flex-shrink-0">5</span>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-neutral-100">Registra el CTA (o su ausencia)</p>
+<p class="text-neutral-400 text-sm mt-1">¿Qué se le pidió al lector al final? ¿Guardar, comentar, aplicar, hacer clic? ¿O no había CTA, y eso también es información sobre por qué funcionó?</p>
+<div class="mt-2 bg-dark-700/50 rounded-lg px-4 py-2">
+<p class="text-xs text-neutral-400"><em>Pregunta de captura:</em> <span class="text-amber-400">"¿Qué se animó a hacer al lector?"</span></p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-amber-500/10 border border-amber-500/30 rounded-lg px-5 py-4">
+<p class="text-amber-400 font-semibold text-sm mb-1">Resultado de los 5 pasos</p>
+<p class="text-neutral-300 text-sm">Ahora ya tienes la estructura <strong>D → E → E → B → CTA</strong> extraída del acierto. Esa es la plantilla. La próxima vez, empiezas aquí, no desde cero.</p>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">🔄 El acierto se convierte en plantilla · el error, en ajuste · la repetición, en proceso</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El ciclo de madurez comienza con la improvisación y termina en la biblioteca viva. Cada escalón representa una transformación: el conocimiento tácito (en tu cabeza) se va volviendo explícito (en el sistema). Mira dónde estás y qué necesitas para subir un escalón.
+      </p>
+<!-- SVG Escada de maturidade -->
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-4 overflow-hidden mb-6">
+<svg aria-label="Escalera de madurez: peldaño 1 Improvisación, peldaño 2 Registro Puntual, peldaño 3 Plantilla, peldaño 4 Playbook, peldaño 5 Biblioteca Viva; cada peldaño es más alto y tiene un color más intenso" class="w-full h-auto" role="img" viewbox="0 0 900 260">
+<defs>
+<lineargradient id="m41-step-grad" x1="0" x2="0" y1="1" y2="0">
+<stop offset="0" stop-color="#fbbf24" stop-opacity="0.3"></stop>
+<stop offset="1" stop-color="#f59e0b" stop-opacity="0.85"></stop>
+</lineargradient>
+<filter height="160%" id="m41-glow" width="160%" x="-30%" y="-30%">
+<fegaussianblur result="b" stddeviation="2.5"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="28" id="m41-grid" patternunits="userSpaceOnUse" width="28">
+<circle cx="1" cy="1" fill="#fbbf24" opacity="0.08" r="1"></circle>
+</pattern>
+</defs>
+<rect fill="url(#m41-grid)" height="260" width="900" x="0" y="0"></rect>
+<!-- degrau 1 (base) -->
+<rect fill="#1f1604" height="50" rx="6" stroke="#fbbf24" stroke-opacity="0.4" stroke-width="1.5" width="140" x="30" y="190"></rect>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="100" y="212">1 · Improvisación</text>
+<text fill="#a37b2c" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="100" y="229">cada vez desde cero</text>
+<!-- degrau 2 -->
+<rect fill="#1f1604" height="75" rx="6" stroke="#fbbf24" stroke-opacity="0.55" stroke-width="1.8" width="140" x="200" y="165"></rect>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="270" y="193">2 · Registro</text>
+<text fill="#a37b2c" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="270" y="210">puntual, sin sistema</text>
+<!-- degrau 3 -->
+<rect fill="#1f1604" height="105" rx="6" stroke="#fbbf24" stroke-opacity="0.7" stroke-width="2" width="140" x="370" y="135"></rect>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="440" y="167">3 · Plantilla</text>
+<text fill="#a37b2c" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="440" y="184">estructura extraída</text>
+<!-- degrau 4 -->
+<rect fill="#1f1604" filter="url(#m41-glow)" height="140" rx="6" stroke="#f59e0b" stroke-width="2.5" width="140" x="540" y="100"></rect>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="13" font-weight="700" text-anchor="middle" x="610" y="134">4 · Playbook</text>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="610" y="152">proceso de 1 página</text>
+<!-- degrau 5 -->
+<rect fill="#1f1604" filter="url(#m41-glow)" height="185" rx="8" stroke="#38bdf8" stroke-width="2.5" width="155" x="710" y="55"></rect>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="13" font-weight="700" text-anchor="middle" x="787" y="96">5 · Biblioteca</text>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="787" y="114">viva · curada · activa</text>
+<!-- setas de subida -->
+<g fill="none" opacity="0.5" stroke="#fbbf24" stroke-dasharray="4,3" stroke-width="1.5">
+<line x1="170" x2="200" y1="205" y2="195"></line>
+<line x1="340" x2="370" y1="175" y2="160"></line>
+<line x1="510" x2="540" y1="145" y2="125"></line>
+<line x1="680" x2="710" y1="108" y2="80"></line>
+</g>
+<!-- label -->
+<text fill="#a37b2c" font-family="Inter,sans-serif" font-size="11" opacity="0.7" text-anchor="middle" x="450" y="252">El Módulo 4.1 cubre los niveles 3 y 4 · El Módulo 4.2 te lleva al 5</text>
+</svg>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-5">
+<p class="text-amber-400 font-semibold mb-2">Acierto → Plantilla</p>
+<p class="text-neutral-300 text-sm">Cuando algo funciona: extrae la estructura con los 5 pasos del tema anterior. Documenta el patrón, no el caso específico.</p>
+</div>
+<div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-5">
+<p class="text-amber-400 font-semibold mb-2">Error → Ajuste</p>
+<p class="text-neutral-300 text-sm">Cuando algo falla: registra el diagnóstico. "Qué salió mal y por qué" tiene más valor que ocultar el fallo e intentar otra cosa.</p>
+</div>
+<div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-5">
+<p class="text-amber-400 font-semibold mb-2">Repetición → Proceso</p>
+<p class="text-neutral-300 text-sm">Cuando lo repites 3+ veces, es hora de formalizarlo en un playbook. La repetición es la señal de que el proceso tiene valor para escalar.</p>
+</div>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">📋 Tu primer playbook (1 página)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Un playbook de 1 página no es una limitación — es una <strong class="text-amber-400">restricción de diseño</strong>. Un proceso que no cabe en una página no se ha destilado lo suficiente. Si necesitas más, divídelo en dos playbooks más pequeños. La restricción es lo que garantiza que sobreviva y se use.
+      </p>
+<div class="bg-dark-800 border border-amber-500/30 rounded-xl overflow-hidden mb-6">
+<div class="px-4 py-2 bg-amber-900/30 border-b border-amber-500/20 flex items-center gap-2">
+<span class="text-amber-400 text-xs font-semibold">PLAYBOOK · PLANTILLA DE 1 PÁGINA</span>
+</div>
+<pre class="p-5 text-sm text-neutral-300 overflow-x-auto leading-relaxed font-mono"><code># [NOME DO PROCESSO] — Playbook v1
+## Quando usar
+[Situação específica que dispara este processo]
+
+## Passo a passo
+1. [Etapa 1 — ação concreta]
+2. [Etapa 2 — ação concreta]
+3. [Etapa 3 — ação concreta]
+4. [Etapa 4 — opcional se necessário]
+
+## Prompt padrão
+"""
+[Cole aqui o prompt testado — com variáveis em [COLCHETES]]
+"""
+
+## Exemplo de resultado esperado
+[Descreva em 2-3 linhas como fica a saída quando funciona bem]
+
+## Métricas de sucesso
+- [ ] [Critério 1 — ex.: aprovado sem edição]
+- [ ] [Critério 2 — ex.: tempo &lt; X minutos]
+
+## Quando não está funcionando
+[O que ajustar — prompt? contexto? estrutura?]
+
+## Versão: v1 · Criado: [data] · Campeão atual: sim</code></pre>
+</div>
+<div class="bg-blue-900/20 border border-blue-500/30 rounded-lg px-4 py-3 mb-4">
+<p class="text-blue-400 text-sm font-semibold mb-1">Conexión T1 → T4</p>
+<p class="text-neutral-300 text-sm">En la Ruta 1 aprendiste a nombrar y versionar prompts. Aquí eso se convierte en el campo «Prompt estándar» del playbook. La semilla plantada en la R1 germina en el método de la R4.</p>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> Consejo: empieza con algo ya completado, no en blanco
+        </h3>
+<p class="text-neutral-300 text-sm">No esperes a tener el proceso perfecto para crear el playbook. Créalo con lo que ya sabes hoy: versión 1. Un playbook imperfecto que se usa vale más que uno perfecto que nunca existió.</p>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">📊 Métricas simples: qué cuenta como «salió bien»</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        La métrica debe declararse <strong class="text-amber-400">antes</strong> de usar el proceso, no inventada después para justificar el resultado. Si no sabes qué significa «salió bien», cualquier cosa parece razonable y nunca mejoras nada.
+      </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<h3 class="text-green-400 font-semibold mb-3">✓ Métricas útiles</h3>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Se usa sin editar → métrica: 0 ediciones</li>
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Aprobado a la primera → métrica: 0 revisiones</li>
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Ahorraste tiempo → métrica: X minutos ahorrados</li>
+<li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✓</span> Tasa de reutilización → métrica: % de veces que se aplica</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<h3 class="text-red-400 font-semibold mb-3">✗ Métricas engañosas</h3>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> "Quedó bien" — subjetivo, no comparable</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> "Mejor que antes" — ¿antes de cuándo? ¿Comparado con qué?</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> "Al cliente le gustó" — ¿una vez? ¿Siempre? ¿Qué cliente?</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Sensación de productividad sin datos concretos</li>
+</ul>
+</div>
+</div>
+<div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3">El campo "Métricas de éxito" en el playbook</h3>
+<p class="text-neutral-300 text-sm mb-3">Cada playbook tiene un campo de métricas. Complétalo con 2–3 criterios antes de usarlo por primera vez. Después de 5 ejecuciones, revísalos: ¿los criterios siguen teniendo sentido? ¿El proceso está dando resultados?</p>
+<p class="text-neutral-300 text-sm">Si el proceso no alcanza las métricas declaradas: es hora de ajustar el playbook, no de ignorar los números.</p>
+</div>
+</section>
+<!-- TOPICO 7 -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">7</span>
+<h2 class="text-2xl font-bold">⏱️ Rutina de captura: 5 min al final del día</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El contexto más valioso existe justo después de la ejecución. No en una retrospectiva mensual ni en una reunión de equipo: ahora, mientras la sesión aún está viva en la memoria. Son apenas 5 minutos, pero deben ocurrir todos los días.
+      </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-5">
+<h3 class="text-amber-400 font-semibold mb-2">⏰ Las 3 preguntas de la captura diaria</h3>
+<ul class="text-sm text-neutral-300 space-y-2">
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">1.</span> ¿Qué funcionó hoy y vale la pena repetir?</li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">2.</span> ¿Qué repetí ayer sin darme cuenta?</li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">3.</span> ¿Qué ajustarías antes de volver a hacerlo mañana?</li>
+</ul>
+</div>
+<div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-5">
+<h3 class="text-amber-400 font-semibold mb-2">📍 Dónde y cómo registrar</h3>
+<ul class="text-sm text-neutral-300 space-y-2">
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">→</span> Una nota en la aplicación que ya usas (no crees una nueva)</li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">→</span> Archivo de texto simple con la fecha en el nombre</li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">→</span> Cada semana: convierte lo mejor en un playbook</li>
+<li class="flex items-start gap-2"><span class="text-amber-400 mt-0.5">→</span> Mensualmente: revisa y archiva lo irrelevante</li>
+</ul>
+</div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+<div class="bg-dark-800 border border-dark-600 rounded-xl p-4 text-center">
+<div class="text-2xl mb-2">🔍</div>
+<div class="text-amber-400 font-semibold text-sm mb-1">Ingeniería inversa</div>
+<div class="text-neutral-500 text-xs">extraer la estructura de lo que ya funcionó</div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-xl p-4 text-center">
+<div class="text-2xl mb-2">📐</div>
+<div class="text-amber-400 font-semibold text-sm mb-1">Estructura DEEBC</div>
+<div class="text-neutral-500 text-xs">Dolor · Explicación · Ejemplo · Beneficio · CTA</div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-xl p-4 text-center">
+<div class="text-2xl mb-2">📄</div>
+<div class="text-amber-400 font-semibold text-sm mb-1">Playbook de 1 página</div>
+<div class="text-neutral-500 text-xs">proceso que cabe en una pantalla y funciona de verdad</div>
+</div>
+<div class="bg-dark-800 border border-dark-600 rounded-xl p-4 text-center">
+<div class="text-2xl mb-2">⏰</div>
+<div class="text-amber-400 font-semibold text-sm mb-1">Rutina de captura</div>
+<div class="text-neutral-500 text-xs">5 min diarios · ventana de frescura</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center">
+<span class="mr-2">💡</span> La ventana de frescura
+        </h3>
+<p class="text-neutral-300 text-sm">El contexto empieza a degradarse en cuestión de horas. Lo que ahora parece obvio ("claro que funcionó porque usé aquel enfoque...") desaparece para mañana. Los 5 minutos al final del día son la única ventana confiable para registrar lo que importa.</p>
+</div>
+</section>
+<!-- RESUMO DO MÓDULO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-2xl border border-amber-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6">Resumen del Módulo 4.1</h2>
+<ul class="space-y-3 mb-8">
+<li class="flex items-start gap-3 text-neutral-300"><span class="text-amber-400 mt-0.5 text-lg">✓</span> El conocimiento que no se registra se evapora: no es una falla de memoria, es una falla del sistema.</li>
+<li class="flex items-start gap-3 text-neutral-300"><span class="text-amber-400 mt-0.5 text-lg">✓</span> Registra lo que se puede reutilizar: 3+ ejecuciones similares = playbook. Por debajo de eso, todavía es un patrón emergente.</li>
+<li class="flex items-start gap-3 text-neutral-300"><span class="text-amber-400 mt-0.5 text-lg">✓</span> Estructura DEEBC: la anatomía detrás de cualquier contenido que tiene buen rendimiento.</li>
+<li class="flex items-start gap-3 text-neutral-300"><span class="text-amber-400 mt-0.5 text-lg">✓</span> Ingeniería inversa en 5 pasos — aplicable hoy a cualquier acierto reciente.</li>
+<li class="flex items-start gap-3 text-neutral-300"><span class="text-amber-400 mt-0.5 text-lg">✓</span> Playbook de 1 página: la restricción de tamaño es lo que garantiza que siga vigente.</li>
+<li class="flex items-start gap-3 text-neutral-300"><span class="text-amber-400 mt-0.5 text-lg">✓</span> Métricas declaradas de antemano, no inventadas después.</li>
+<li class="flex items-start gap-3 text-neutral-300"><span class="text-amber-400 mt-0.5 text-lg">✓</span> Rutina diaria de 5 minutos: contexto fresco, captura consistente.</li>
+</ul>
+<div class="bg-dark-900/50 border border-amber-500/30 rounded-xl p-6 mb-6">
+<p class="text-amber-400 font-bold text-base mb-2">📦 Entregable de este módulo:</p>
+<p class="text-neutral-300">Elige un proceso que ya realizas con IA (resumir reuniones, escribir correos, crear publicaciones). Usa la plantilla del tema 5, completa los 7 campos y ponle un nombre con versión. Ese es tu playbook 1.0.</p>
+</div>
+<div class="bg-dark-800/60 rounded-xl border border-dark-600 p-5">
+<p class="text-neutral-400 font-semibold mb-2">Siguiente Módulo:</p>
+<p class="text-neutral-300 text-sm mb-4">En el 4.2 organizas esos playbooks en una <strong class="text-amber-400">Biblioteca Viva</strong> — con un sistema de nombres, control de versiones y curación, y el atajo para quienes llegan tarde: empezar con 3 elementos y crecer de forma sostenida.</p>
+<div class="flex flex-col sm:flex-row gap-3 justify-start">
+<a class="inline-block px-5 py-2.5 bg-dark-700 hover:bg-dark-600 rounded-lg font-semibold transition-colors text-sm text-center" href="index.html">
+              ← Ruta 4: Aprovechamiento
+            </a>
+<a class="inline-block px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-semibold transition-colors text-sm text-center" href="modulo-4-2.html">
+              Módulo 4.2: Biblioteca viva →
+            </a>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p>Ingeniería de Conocimiento de la IA — Pirámide de la IA · <a class="text-sky-400 hover:text-sky-300" href="https://inema.club" target="_blank">INEMA.CLUB</a></p>
+</div>
+</footer>
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>
